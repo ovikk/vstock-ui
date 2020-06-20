@@ -1,15 +1,17 @@
 import React from "react";
 import styled from "styled-components";
-import routes from "routes";
+import appRoutes from "routes/appRoutes";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import ExitToAppOutlinedIcon from "@material-ui/icons/ExitToAppOutlined";
 
 export default function LeftMenu() {
   const loc = useLocation();
 
+  console.log(loc)
+
   return (
     <Wrapper>
-      {routes.map((route, i) => (
+      {appRoutes.map((route, i) => (
         <Link
           isselected={loc.pathname.startsWith(route.path) ? 1 : 0}
           to={route.path}
