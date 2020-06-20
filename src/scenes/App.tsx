@@ -1,12 +1,28 @@
 import React from "react";
 import styled from "styled-components";
 import LeftMenu from "components/LeftMenu";
+import routes from "routes";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+} from "react-router-dom";
 
 const App = () => {
   return (
     <AppWrapper>
-      <LeftMenu />
-      <span>Lol kek</span>
+      <Router>
+        <LeftMenu />
+        <Switch>
+          {routes.map((route: any, i) => (
+            <Route
+              path={route.path}
+              render={(props) => <route.component {...props} />}
+              key={i}
+            />
+          ))}
+        </Switch>
+      </Router>
     </AppWrapper>
   );
 };
@@ -24,7 +40,7 @@ const AppWrapper = styled.div`
   right: 0;
   bottom: 0;
 
-  font-family: 'Roboto'
+  font-family: "Roboto";
 `;
 
 export default App;

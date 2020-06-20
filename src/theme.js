@@ -9,7 +9,7 @@ export default {
   },
   sizes: {
     leftMenu: {
-      width: "300px",
+      width: "250px",
       borderRadius: "20px",
     },
   },
