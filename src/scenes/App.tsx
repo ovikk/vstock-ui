@@ -45,7 +45,7 @@ const AppWrapper = styled.div`
   right: 0;
   bottom: 0;
 
-  font-family: "Roboto";
+  font-family: ${props => props.theme.font};
 `;
 
 export default App;

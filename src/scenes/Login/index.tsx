@@ -1,117 +1,111 @@
-import React from "react";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
+import React from 'react';
+import styled from 'styled-components';
+import { Theme } from 'theme';
+import Button from '@material-ui/core/Button';
 
-function Copyright() {
+const Login = () => {
   return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="http://localhost:3000">
-        vStock
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
+    <Wrapper>
+      <LoginComponentWrapper>
+        <Title>Вход</Title>
+
+        <TextInputWrapper>
+          <TextInputText>Логин</TextInputText>
+          <TextInput />
+        </TextInputWrapper>
+
+        <TextInputWrapper>
+          <TextInputText>Пароль</TextInputText>
+          <TextInput type="password"/>
+        </TextInputWrapper>
+
+        <ActionButton>Войти</ActionButton>
+      </LoginComponentWrapper>
+    </Wrapper>
   );
-}
+};
 
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
+const Wrapper = styled.div`
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  position: fixed;
+  background-color: ${(props: { theme: Theme }) =>
+    props.theme.colors.background};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: ${(props) => props.theme.font};
+  color: ${(props: { theme: Theme }) => props.theme.colors.textColor};
+`;
 
-export default function SignIn() {
-  const classes = useStyles();
+const LoginComponentWrapper = styled.div`
+  width: 510px;
+  height: 520px;
+  background-color: ${(props: { theme: Theme }) =>
+    props.theme.colors.lightBackground};
+  box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.25);
+  border-radius: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
-  return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign in
-        </Typography>
-        <form className={classes.form} noValidate>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Sign In
-          </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-          </Grid>
-        </form>
-      </div>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
-    </Container>
-  );
-}
+const Title = styled.span`
+  font-size: 28px;
+  margin-top: 40px;
+  margin-bottom: 60px;
+`;
+
+const TextInputWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 15px 0px;
+`;
+
+const TextInputText = styled.span`
+  font-size: 20px;
+  margin-bottom: 10px;
+`;
+
+const TextInput = styled.input`
+  width: 300px;
+  height: 40px;
+  border: 2px solid;
+  border-color: ${({ theme }) => theme.colors.nonFocusedTextColor};
+  box-sizing: border-box;
+  border-radius: 40px;
+  background-color: inherit;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.nonFocusedTextColor};
+  transition: border-color 500ms cubic-bezier(0, 0, 0.2, 1) 100ms;
+  font-size: 18px;
+  font-family: ${({theme}) => theme.font};
+
+  :focus {
+    color: ${({ theme }) => theme.colors.textColor};
+    border-color: ${({ theme }) => theme.colors.mainColor};
+    outline: none;
+  }
+`;
+const ActionButton = styled(Button)`
+  && {
+    margin-top: 60px;
+    background-color: ${({ theme }) => theme.colors.mainColor};
+    width: 230px;
+    height: 55px;
+    border-radius: 40px;
+    color: ${({ theme }) => theme.colors.textColor};
+    text-transform: none;
+    font-size: 18px;
+
+    :hover {
+      background-color: ${({ theme }) => theme.colors.nonFocusedTextColor}
+    }
+  }
+`;
+
+export default Login;

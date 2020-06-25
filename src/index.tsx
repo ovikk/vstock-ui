@@ -1,14 +1,14 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   Redirect,
-} from "react-router-dom";
-import { ThemeProvider } from "styled-components";
-import theme from "./theme";
-import mainRoutes from "routes/mainRoutes";
+} from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
+import theme from './theme';
+import mainRoutes from 'routes/mainRoutes';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -29,5 +29,5 @@ ReactDOM.render(
       </Router>
     </ThemeProvider>
   </React.StrictMode>,
-  document.getElementById("root")
+  document.getElementById('root')
 );

@@ -33,7 +33,7 @@ export default function LeftMenu() {
 const Wrapper = styled.div`
   background-color: ${(props) => props.theme.colors.lightBackground};
   height: 100%;
-  width: ${(props) => props.theme.sizes.leftMenu.width};
+  width: 300px;
   border-radius: 0px 15px 15px 0px;
   display: flex;
   flex-direction: column;
@@ -56,7 +56,7 @@ const Link: any = styled(RouterLink)`
   color: ${(props: any) =>
     props.isselected
       ? "#FFFFFF"
-      : props.theme.colors.leftMenu.nonSelectedTextColor};
+      : props.theme.colors.nonSelectedTextColor};
   font-size: 20px;
   &:hover {
     background-color: ${(props: any) =>
