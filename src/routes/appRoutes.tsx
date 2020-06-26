@@ -1,52 +1,54 @@
-import React from "react";
-import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
-import ShowChartOutlinedIcon from "@material-ui/icons/ShowChartOutlined";
-import StorageOutlinedIcon from "@material-ui/icons/StorageOutlined";
-import AttachMoneyOutlinedIcon from "@material-ui/icons/AttachMoneyOutlined";
-import RoomOutlinedIcon from "@material-ui/icons/RoomOutlined";
+import React from 'react';
+import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined';
+import ShowChartOutlinedIcon from '@material-ui/icons/ShowChartOutlined';
+import StorageOutlinedIcon from '@material-ui/icons/StorageOutlined';
+import AttachMoneyOutlinedIcon from '@material-ui/icons/AttachMoneyOutlined';
+import RoomOutlinedIcon from '@material-ui/icons/RoomOutlined';
+
+import Stock from 'scenes/Stock';
 
 const appRoutes = [
   {
-    name: "Аккаунт",
+    name: 'Аккаунт',
     isselected: true,
     icon: PersonOutlineOutlinedIcon,
-    path: "/app/account",
+    path: '/app/account',
     component: () => <div>Kek1</div>,
   },
   {
-    name: "Статистика",
+    name: 'Статистика',
     icon: ShowChartOutlinedIcon,
-    path: "/app/stats",
+    path: '/app/stats',
     component: () => <div>Kek2</div>,
   },
   {
-    name: "Интвентарь",
+    name: 'Интвентарь',
     icon: StorageOutlinedIcon,
-    path: "/app/stock",
-    component: () => <div>Kek3</div>,
+    path: '/app/stock',
+    component: Stock,
   },
   {
-    name: "Подписки",
+    name: 'Подписки',
     icon: AttachMoneyOutlinedIcon,
-    path: "/app/subscriptions",
+    path: '/app/subscriptions',
     component: () => <div>Kek4</div>,
   },
   {
-    name: "Трекер",
+    name: 'Трекер',
     icon: RoomOutlinedIcon,
-    path: "/app/tracker",
+    path: '/app/tracker',
     component: () => <div>Kek5</div>,
   },
   {
-    name: "Продажи",
+    name: 'Продажи',
     icon: RoomOutlinedIcon,
-    path: "/app/sales",
+    path: '/app/sales',
     component: () => <div>Kek5</div>,
   },
   {
-    name: "Рыночные Цены",
+    name: 'Рыночные Цены',
     icon: RoomOutlinedIcon,
-    path: "/app/market",
+    path: '/app/market',
     component: () => <div>Kek5</div>,
   },
 ];

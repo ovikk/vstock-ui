@@ -10,6 +10,8 @@ import { ThemeProvider } from 'styled-components';
 import theme from './theme';
 import mainRoutes from 'routes/mainRoutes';
 
+import 'fonts/index.css'
+
 ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
