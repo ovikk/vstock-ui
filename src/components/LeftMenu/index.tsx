@@ -17,7 +17,7 @@ export default function LeftMenu() {
           to={route.path}
           key={i}
         >
-          <LinkText >{route.name}</LinkText>
+          <LinkText>{route.name}</LinkText>
           {route.icon && <route.icon style={iconStyle} />}
         </Link>
       ))}
@@ -33,7 +33,7 @@ export default function LeftMenu() {
 const Wrapper = styled.div`
   background-color: ${(props) => props.theme.colors.lightBackground};
   height: 100%;
-  width: 300px;
+  min-width: 300px;
   border-radius: 0px 15px 15px 0px;
   display: flex;
   flex-direction: column;
