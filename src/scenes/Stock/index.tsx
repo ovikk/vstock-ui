@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import SearchIcon from '@material-ui/icons/Search';
 import AddIcon from '@material-ui/icons/Add';
+import { Scrollbars } from 'react-custom-scrollbars';
 import theme from 'theme';
 
 const Stock = () => {
@@ -36,6 +37,20 @@ const Stock = () => {
           <AddIcon style={AddIconStyle} />
         </AddButton>
       </TopBarWrapper>
+
+      <ItemListWrapper>
+        <ShadowTop />
+
+        <ItemWrapper>kek</ItemWrapper>
+        <ItemWrapper>kek</ItemWrapper>
+        <ItemWrapper>kek</ItemWrapper>
+        <ItemWrapper>kek</ItemWrapper>
+        <ItemWrapper>kek</ItemWrapper>
+        <ItemWrapper>kek</ItemWrapper>
+        <ItemWrapper>kek</ItemWrapper>
+        <ItemWrapper>kek</ItemWrapper>
+        <ShadowBottom />
+      </ItemListWrapper>
     </MainWrapper>
   );
 };
@@ -43,11 +58,14 @@ const Stock = () => {
 export default Stock;
 
 const MainWrapper = styled.div`
-  max-width: 100%;
-  max-height: 100%;
-  padding: 40px 20px;
+  width: 100%;
+  height: 100%;
+  padding: 40px 20px 10px 20px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: hidden;
 `;
 
 const StockSwithcerWrapper = styled.div`
@@ -152,9 +170,55 @@ const AddButton = styled.button`
 
   &:hover {
     color: ${({ theme }) => theme.colors.textColor};
-    box-shadow: ${({ theme }) => `0 0.5em 0.5em -0.45em ${theme.colors.approveColor}`};
+    box-shadow: ${({ theme }) =>
+      `0 0.5em 0.5em -0.45em ${theme.colors.approveColor}`};
     transform: translateY(-0.25em);
   }
+`;
+
+const ShadowTop = styled.div`
+  content: '';
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    to top,
+    rgba(0, 16, 34, 0),
+    rgba(0, 16, 34, 1) 90%
+  );
+  height: 40px;
+`;
+
+const ShadowBottom = styled.div`
+  content: '';
+  position: sticky;
+  z-index: 1;
+  bottom: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 16, 34, 0),
+    rgba(0, 16, 34, 1) 90%
+  );
+  height: 40px;
+`;
+
+const ItemListWrapper = styled.div`
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding-left: 30px;
+  overflow-y: scroll;
+  margin-top: 10px;
+`;
+
+const ItemWrapper = styled.div`
+  width: calc(100% - 100px);
+  background-color: ${({ theme }) => theme.colors.lightBackground};
+  border-radius: 10px;
+  height: 150px;
+  margin-bottom: 25px;
 `;
 
 const AddIconStyle = {

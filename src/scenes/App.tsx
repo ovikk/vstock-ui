@@ -35,8 +35,8 @@ const App = () => {
 const AppWrapper = styled.div`
   background-color: ${(props) => props.theme.colors.background};
 
-  height: 100%;
-  width: 100%;
+  max-height: 100vh;
+  max-width: 100vw;
   display: flex;
 
   position: absolute;
