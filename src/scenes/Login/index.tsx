@@ -1,9 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Theme } from 'theme';
 import Button from '@material-ui/core/Button';
 
+import { login } from 'scenes/appActions';
+
+import { useDispatch } from 'react-redux';
+
 const Login = () => {
+  const dispatch = useDispatch();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const onLoginClick = () => dispatch(login(email, password));
+
   return (
     <Wrapper>
       <LoginComponentWrapper>
@@ -11,15 +22,24 @@ const Login = () => {
 
         <TextInputWrapper>
           <TextInputText>Логин</TextInputText>
-          <TextInput />
+          <TextInput value={email} onChange={(e) => setEmail(e.target.value)} />
         </TextInputWrapper>
 
         <TextInputWrapper>
           <TextInputText>Пароль</TextInputText>
-          <TextInput type="password"/>
+          <TextInput
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </TextInputWrapper>
 
-        <ActionButton>Войти</ActionButton>
+        <ActionButton
+          disabled={email.length < 4 || password.length < 4}
+          onClick={onLoginClick}
+        >
+          Войти
+        </ActionButton>
       </LoginComponentWrapper>
     </Wrapper>
   );
@@ -83,7 +103,7 @@ const TextInput = styled.input`
   color: ${({ theme }) => theme.colors.nonFocusedTextColor};
   transition: border-color 500ms cubic-bezier(0, 0, 0.2, 1) 100ms;
   font-size: 18px;
-  font-family: ${({theme}) => theme.font};
+  font-family: ${({ theme }) => theme.font};
 
   :focus {
     color: ${({ theme }) => theme.colors.textColor};
@@ -103,7 +123,7 @@ const ActionButton = styled(Button)`
     font-size: 18px;
 
     :hover {
-      background-color: ${({ theme }) => theme.colors.nonFocusedTextColor}
+      background-color: ${({ theme }) => theme.colors.nonFocusedTextColor};
     }
   }
 `;
