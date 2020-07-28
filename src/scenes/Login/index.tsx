@@ -1,17 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Theme } from 'theme';
 import Button from '@material-ui/core/Button';
 
-import { login } from 'scenes/appActions';
+import authAction, { login } from 'scenes/Login/authActions';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Login = () => {
   const dispatch = useDispatch();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const { loginError } = useSelector((state: any) => state.auth);
+
+  useEffect(() => {
+    if (loginError !== '') {
+      dispatch(authAction.setLogInError(''));
+    }
+  }, [email, password]);
 
   const onLoginClick = () => dispatch(login(email, password));
 
@@ -33,6 +41,8 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </TextInputWrapper>
+
+        <ErrorText>{loginError}</ErrorText>
 
         <ActionButton
           disabled={email.length < 4 || password.length < 4}
@@ -113,7 +123,7 @@ const TextInput = styled.input`
 `;
 const ActionButton = styled(Button)`
   && {
-    margin-top: 60px;
+    margin-top: 30px;
     background-color: ${({ theme }) => theme.colors.mainColor};
     width: 230px;
     height: 55px;
@@ -126,6 +136,14 @@ const ActionButton = styled(Button)`
       background-color: ${({ theme }) => theme.colors.nonFocusedTextColor};
     }
   }
+`;
+
+const ErrorText = styled.div`
+  height: 50px;
+  width: 70%;
+  font-size: 20px;
+  color: ${({ theme }) => theme.colors.errorColor};
+  text-align: center;
 `;
 
 export default Login;

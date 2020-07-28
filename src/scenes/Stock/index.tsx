@@ -218,7 +218,7 @@ const ItemMainInfoBottom = styled.div`
 const ItemMainInfoBottomSection = styled.div`
   width: 190px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
 `;
 
 const ItemMainInfoBottomTitle = styled.span`
@@ -354,9 +354,47 @@ const Stock = () => {
             {/* <ItemControls>control</ItemControls> */}
           </ItemTopWrapper>
 
-          <div
+          {/* <div
             style={{ width: '100%', height: 30, backgroundColor: 'wheat' }}
-          ></div>
+          ></div> */}
+        </ItemWrapper>
+        <ItemWrapper>
+          <ItemTopWrapper>
+            <ItemImage src={sneaker} />
+            <ItemMainInfoWrapper>
+              <ItemMainInfoTop>
+                <ItemName>YZY QNTM BARIUM</ItemName>
+                <ItemLink>Подробнее</ItemLink>
+                <ItemCost>250$</ItemCost>
+              </ItemMainInfoTop>
+              <ItemMainInfoBottom>
+                <ItemMainInfoBottomSection>
+                  <ItemMainInfoBottomTitle>Размер</ItemMainInfoBottomTitle>
+                  <ItemMainInfoBottomText>10 US</ItemMainInfoBottomText>
+                </ItemMainInfoBottomSection>
+
+                <ItemMainInfoBottomSection>
+                  <ItemMainInfoBottomTitle>Источник</ItemMainInfoBottomTitle>
+                  <ItemMainInfoBottomText>adidas</ItemMainInfoBottomText>
+                </ItemMainInfoBottomSection>
+
+                <ItemMainInfoBottomSection>
+                  <ItemMainInfoBottomTitle>Цвет</ItemMainInfoBottomTitle>
+                  <ItemMainInfoBottomText>VALORANT</ItemMainInfoBottomText>
+                </ItemMainInfoBottomSection>
+              </ItemMainInfoBottom>
+            </ItemMainInfoWrapper>
+
+            <ItemButtonsWrapper>
+              <ItemButton>Продано</ItemButton>
+              <ItemButton>Разместить</ItemButton>
+            </ItemButtonsWrapper>
+            {/* <ItemControls>control</ItemControls> */}
+          </ItemTopWrapper>
+
+          {/* <div
+            style={{ width: '100%', height: 30, backgroundColor: 'wheat' }}
+          ></div> */}
         </ItemWrapper>
 
         <ShadowBottom />

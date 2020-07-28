@@ -8,6 +8,7 @@ export default {
     mainColor: '#2D9CDB',
     secondaryColor: '#394974',
     approveColor: '#6FCF97',
+    errorColor: 'red'
   },
   font: 'Ubuntu',
   fontBold: 'Ubuntu-Bold',
