@@ -6,7 +6,7 @@ export const envs = {
     server: `http://${localIp}:8899`,
   },
   prod: {
-    server: 'http://46.101.99.145',
+    server: 'http://46.101.99.145:8080',
   },
 }
 

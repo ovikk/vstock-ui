@@ -15,6 +15,8 @@ import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import rootReducer from './rootReducer';
 
+import ModifiedRoute from 'components/ModifiedRoute'
+
 import 'fonts/index.css';
 
 ReactDOM.render(
@@ -23,11 +25,13 @@ ReactDOM.render(
       <ThemeProvider theme={theme}>
         <Router>
           <Switch>
-            {mainRoutes.map((route: any, i) => (
-              <Route
+            {mainRoutes.map((route, i) => (
+              <ModifiedRoute
                 path={route.path}
                 render={(props) => <route.component {...props} />}
+                Component={route.component}
                 key={i}
+                isPrivate={route.isPrivate}
               />
             ))}
             <Route path="*">

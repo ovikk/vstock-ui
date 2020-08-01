@@ -4,10 +4,13 @@ import appRoutes from 'routes/appRoutes.jsx';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 
+import { useDispatch } from 'react-redux';
+import { logout } from 'scenes/Login/authActions';
+
 export default function LeftMenu() {
   const loc = useLocation();
 
-  console.log(loc);
+  const dispatch = useDispatch();
 
   return (
     <Wrapper>
@@ -22,7 +25,12 @@ export default function LeftMenu() {
         </Link>
       ))}
 
-      <Link to={'/logout'} key={-1} style={logoutStyle}>
+      <Link
+        key={-1}
+        style={logoutStyle}
+        onClick={() => dispatch(logout())}
+        to={'/login'}
+      >
         <LinkText>Выйти</LinkText>
         <ExitToAppOutlinedIcon style={iconStyle} />
       </Link>

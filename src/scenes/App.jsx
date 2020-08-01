@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import LeftMenu from 'components/LeftMenu';
 import appRoutes from 'routes/appRoutes.jsx';
@@ -9,14 +9,31 @@ import {
   Redirect,
 } from 'react-router-dom';
 
+import { useSelector, useDispatch } from 'react-redux';
+
 const App = () => {
+  console.log('RENDER APP');
+
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
+  if (!isAuthenticated) {
+    return (
+      <Redirect
+        to={{
+          pathname: '/login',
+          state: { from: '/app' },
+        }}
+      />
+    );
+  }
+
   return (
     <AppWrapper>
       <Router>
         <GlobalStyle />
         <LeftMenu />
         <Switch>
-          {appRoutes.map((route: any, i) => (
+          {appRoutes.map((route, i) => (
             <Route
               path={route.path}
               render={(props) => <route.component {...props} />}

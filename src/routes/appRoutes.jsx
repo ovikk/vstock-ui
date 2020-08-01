@@ -6,6 +6,7 @@ import AttachMoneyOutlinedIcon from '@material-ui/icons/AttachMoneyOutlined';
 import RoomOutlinedIcon from '@material-ui/icons/RoomOutlined';
 
 import Stock from 'scenes/Stock';
+import Stats from 'scenes/Stats'
 
 const appRoutes = [
   {
@@ -19,7 +20,7 @@ const appRoutes = [
     name: 'Статистика',
     icon: ShowChartOutlinedIcon,
     path: '/app/stats',
-    component: () => <div>Kek2</div>,
+    component: Stats,
   },
   {
     name: 'Интвентарь',

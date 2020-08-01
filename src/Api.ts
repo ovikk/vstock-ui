@@ -2,6 +2,8 @@ import env from './Env';
 
 const loginUrl = `${env.server}/api/v1/login`;
 const registrateUrl = `${env.server}/api/v1/signin`;
+const logoutUrl = `${env.server}/api/v1/logout`;
+const authUrl = `${env.server}/api/v1/auth`;
 
 const apiFetch = async (url: string, opts: any) => {
   const response = await fetch(url, opts);
@@ -32,13 +34,18 @@ const registrate = (email: string, password: string) => {
 };
 
 const logout = () => {
-  //   return del(loginUrl).then(clearLogin);
+  return post(logoutUrl, {});
 };
+
+const auth = () => {
+  return get(authUrl)
+}
 
 const api = {
   login,
   registrate,
   logout,
+  auth
 };
 
 export default api;

@@ -5,6 +5,9 @@ import Button from '@material-ui/core/Button';
 import authAction, { login, registrate } from 'scenes/Login/authActions';
 
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  Redirect,
+} from 'react-router-dom';
 
 export const loginStates = {
   login: 1,
@@ -121,7 +124,7 @@ const Login = ({ loginPropState }) => {
   const [rPassword, setRPassword] = useState('');
   const [rRepeatPassword, setRRepearPassword] = useState('');
 
-  const { loginError } = useSelector((state) => state.auth);
+  const { loginError, isAuthenticated } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (loginError !== '') {
@@ -219,6 +222,16 @@ const Login = ({ loginPropState }) => {
       </RegistrationLinkWrapper>
     </React.Fragment>
   );
+
+  if (isAuthenticated)
+    return (
+      <Redirect
+        to={{
+          pathname: '/app',
+          state: { from: '/login' },
+        }}
+      />
+    );
 
   return (
     <Wrapper>
