@@ -6,8 +6,8 @@ export const envs = {
     server: `http://${localIp}:8899`,
   },
   prod: {
-    // server: 'https://neverthink.tv',
+    server: 'http://46.101.99.145',
   },
 }
 
-export default envs.local
+export default envs.prod

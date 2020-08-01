@@ -1,13 +1,13 @@
 import env from './Env';
 
 const loginUrl = `${env.server}/api/v1/login`;
+const registrateUrl = `${env.server}/api/v1/signin`;
 
 const apiFetch = async (url: string, opts: any) => {
   const response = await fetch(url, opts);
+  const data = await response.json();
 
-  const data = await response.json()
-
-  return data
+  return data;
 };
 
 const get = (url: string) =>
@@ -27,12 +27,17 @@ const login = (email: string, password: string) => {
   return post(loginUrl, { login: email, password });
 };
 
+const registrate = (email: string, password: string) => {
+  return post(registrateUrl, { login: email, password });
+};
+
 const logout = () => {
   //   return del(loginUrl).then(clearLogin);
 };
 
 const api = {
   login,
+  registrate,
   logout,
 };
 

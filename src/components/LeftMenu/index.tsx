@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import appRoutes from 'routes/appRoutes';
+import appRoutes from 'routes/appRoutes.jsx';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 

@@ -19,4 +19,15 @@ export function login(email, password) {
   };
 }
 
+export function registrate(email, password) {
+  return async (dispatch) => {
+    const response = await Api.registrate(email, password);
+
+    if (response.error) {
+      dispatch(actions.setLogInError(response.error.message));
+    } else {
+    }
+  };
+}
+
 export default actions;

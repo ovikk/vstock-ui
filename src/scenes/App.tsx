@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import LeftMenu from 'components/LeftMenu';
-import appRoutes from 'routes/appRoutes';
+import appRoutes from 'routes/appRoutes.jsx';
 import {
   BrowserRouter as Router,
   Switch,
