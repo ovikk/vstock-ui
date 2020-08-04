@@ -20,7 +20,6 @@ import ModifiedRoute from 'components/ModifiedRoute'
 import 'fonts/index.css';
 
 ReactDOM.render(
-  <React.StrictMode>
     <Provider store={createStore(rootReducer, applyMiddleware(thunk))}>
       <ThemeProvider theme={theme}>
         <Router>
@@ -40,7 +39,6 @@ ReactDOM.render(
           </Switch>
         </Router>
       </ThemeProvider>
-    </Provider>
-  </React.StrictMode>,
+    </Provider>,
   document.getElementById('root')
 );

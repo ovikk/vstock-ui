@@ -12,8 +12,6 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 
 const App = () => {
-  console.log('RENDER APP');
-
   const { isAuthenticated } = useSelector((state) => state.auth);
 
   if (!isAuthenticated) {

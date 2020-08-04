@@ -24,7 +24,6 @@ export function login(email, password) {
   return async (dispatch) => {
     dispatch(actions.setIsLoading(true))
     const response = await Api.login(email, password);
-    console.log(response);
 
     if (response.error) {
       dispatch(actions.setLogInError(response.error.message));
@@ -54,7 +53,6 @@ export function logout() {
   return async (dispatch) => {
     const response = await Api.logout();
 
-    console.log(response);
 
     if (response.error) {
       console.log('were fucked');

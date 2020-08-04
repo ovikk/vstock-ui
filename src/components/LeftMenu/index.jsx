@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import appRoutes from 'routes/appRoutes.jsx';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
@@ -10,17 +10,23 @@ import { logout } from 'scenes/Login/authActions';
 export default function LeftMenu() {
   const loc = useLocation();
 
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const dispatch = useDispatch();
 
   return (
-    <Wrapper>
+    <Wrapper
+      onMouseEnter={() => setIsExpanded(true)}
+      onMouseLeave={() => setIsExpanded(false)}
+      isExpanded={isExpanded}
+    >
       {appRoutes.map((route, i) => (
         <Link
           isselected={loc.pathname.startsWith(route.path) ? 1 : 0}
           to={route.path}
           key={i}
         >
-          <LinkText>{route.name}</LinkText>
+          {isExpanded && <LinkText>{route.name}</LinkText>}
           {route.icon && <route.icon style={iconStyle} />}
         </Link>
       ))}
@@ -31,7 +37,7 @@ export default function LeftMenu() {
         onClick={() => dispatch(logout())}
         to={'/login'}
       >
-        <LinkText>Выйти</LinkText>
+        {isExpanded && <LinkText>Выйти</LinkText>}
         <ExitToAppOutlinedIcon style={iconStyle} />
       </Link>
     </Wrapper>
@@ -41,7 +47,7 @@ export default function LeftMenu() {
 const Wrapper = styled.div`
   background-color: ${(props) => props.theme.colors.lightBackground};
   height: 100%;
-  min-width: 300px;
+  min-width: ${(props) => (props.isExpanded ? '300px' : '50px')};
   border-radius: 0px 15px 15px 0px;
   display: flex;
   flex-direction: column;
@@ -50,23 +56,23 @@ const Wrapper = styled.div`
   padding-left: 10px;
 `;
 
-const Link: any = styled(RouterLink)`
+const Link = styled(RouterLink)`
   && {
     width: 100%;
     height: 70px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: ${(props: any) =>
+    background-color: ${(props) =>
       props.isselected && props.theme.colors.background};
     border-radius: 40px 0px 0px 40px;
     box-sizing: border-box;
     padding: 0px 30px;
     font-family: ${({ theme }) => theme.font};
-    color: ${(props: any) =>
+    color: ${(props) =>
       props.isselected ? '#FFFFFF' : props.theme.colors.nonFocusedTextColor};
     &:hover {
-      background-color: ${(props: any) =>
+      background-color: ${(props) =>
         !props.isselected && props.theme.colors.hoverColor};
     }
     text-decoration: none;

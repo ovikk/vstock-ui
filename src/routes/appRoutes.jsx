@@ -5,7 +5,7 @@ import StorageOutlinedIcon from '@material-ui/icons/StorageOutlined';
 import AttachMoneyOutlinedIcon from '@material-ui/icons/AttachMoneyOutlined';
 import RoomOutlinedIcon from '@material-ui/icons/RoomOutlined';
 
-import Stock from 'scenes/Stock';
+import Inventory from 'scenes/Inventory';
 import Stats from 'scenes/Stats'
 
 const appRoutes = [
@@ -25,8 +25,8 @@ const appRoutes = [
   {
     name: 'Интвентарь',
     icon: StorageOutlinedIcon,
-    path: '/app/stock',
-    component: Stock,
+    path: '/app/inventory',
+    component: Inventory,
   },
   {
     name: 'Подписки',

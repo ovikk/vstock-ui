@@ -8,10 +8,7 @@ const actions = {
 
 export function login(email: string, password: string) {
   return async (dispatch: unknown) => {
-
-    console.log('KEKKE')
     const response = await Api.login(email, password)
-    console.log(response)
   };
 }
 

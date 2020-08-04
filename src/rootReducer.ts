@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux';
-import app from 'scenes/appReducer';
 import auth from 'scenes/Login/authReducer';
+import inventory from 'scenes/Inventory/inventoryReducer'
 
 export default combineReducers({
   auth,
+  inventory
 });

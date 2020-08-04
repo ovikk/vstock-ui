@@ -1,10 +1,86 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import SearchIcon from '@material-ui/icons/Search';
 import AddIcon from '@material-ui/icons/Add';
 import theme from 'theme';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from '@material-ui/core/Dialog';
 
-import sneaker from 'assets/sneaker_1.png';
+import Sneaker from './Sneaker';
+import AddSneakerModal from './AddSneakerModal';
+
+import { fetchOwnInventoryItems } from './inventoryActions';
+
+const Inventory = () => {
+  const [stockState, setStockState] = useState(0);
+  const [showAddSneakerModal, setShowAddSneakerModal] = useState(true);
+
+  const dispatch = useDispatch();
+
+  const { items, isFetchingItems } = useSelector((state) => state.inventory);
+
+  useEffect(() => {
+    if (items === undefined) {
+      dispatch(fetchOwnInventoryItems());
+    }
+  }, []);
+
+  const renderItemList = () => {
+    if (isFetchingItems) return <div>Spinner</div>;
+
+    if (items === undefined) return null;
+
+    return items.map((item, index) => <Sneaker key={index} item={item} />);
+  };
+
+  return (
+    <MainWrapper>
+      <AddSneakerModal
+        showModal={showAddSneakerModal}
+        onClose={() => setShowAddSneakerModal(false)}
+      />
+
+      <StockSwithcerWrapper>
+        <StockSwitcherTab
+          isSelected={stockState === 0}
+          onClick={() => setStockState(0)}
+        >
+          Мой инветнарь
+        </StockSwitcherTab>
+        <StockSwitcherTab
+          style={{ justifyContent: 'flex-end' }}
+          isSelected={stockState === 1}
+          onClick={() => setStockState(1)}
+        >
+          Дилерский инветнарь
+        </StockSwitcherTab>
+      </StockSwithcerWrapper>
+
+      <TopBarWrapper>
+        <SearchWrapper>
+          <SearchIcon style={SearchIconStyle} />
+          <SearchInput placeholder="Что ищем?" />
+        </SearchWrapper>
+
+        <AddButton onClick={() => setShowAddSneakerModal(true)}>
+          Добавить
+          <AddIcon style={AddIconStyle} />
+        </AddButton>
+      </TopBarWrapper>
+
+      <ItemListWrapper>
+        <ShadowTop />
+
+        {renderItemList()}
+
+        <ShadowBottom />
+      </ItemListWrapper>
+    </MainWrapper>
+  );
+};
+
+export default Inventory;
 
 const MainWrapper = styled.div`
   width: 100%;
@@ -21,7 +97,7 @@ const StockSwithcerWrapper = styled.div`
   display: flex;
   margin-left: 30px;
 `;
-const StockSwitcherTab: any = styled.div`
+const StockSwitcherTab = styled.div`
   width: 250px;
   display: flex;
   align-items: center;
@@ -30,12 +106,12 @@ const StockSwitcherTab: any = styled.div`
   border-bottom-width: 3px;
   padding: 0px 5px;
 
-  border-bottom-color: ${(props: any) =>
+  border-bottom-color: ${(props) =>
     props.isSelected
       ? props.theme.colors.mainColor
       : props.theme.colors.secondaryColor};
 
-  color: ${(props: any) =>
+  color: ${(props) =>
     props.isSelected
       ? props.theme.colors.textColor
       : props.theme.colors.secondaryColor};
@@ -283,124 +359,3 @@ const AddIconStyle = {
   marginTop: '2px',
   color: theme.colors.approveColor,
 };
-
-const Stock = () => {
-  const [stockState, setStockState] = useState(0);
-
-  return (
-    <MainWrapper>
-      <StockSwithcerWrapper>
-        <StockSwitcherTab
-          isSelected={stockState === 0}
-          onClick={() => setStockState(0)}
-        >
-          Мой инветнарь
-        </StockSwitcherTab>
-        <StockSwitcherTab
-          style={{ justifyContent: 'flex-end' }}
-          isSelected={stockState === 1}
-          onClick={() => setStockState(1)}
-        >
-          Дилерский инветнарь
-        </StockSwitcherTab>
-      </StockSwithcerWrapper>
-
-      <TopBarWrapper>
-        <SearchWrapper>
-          <SearchIcon style={SearchIconStyle} />
-          <SearchInput placeholder="Что ищем?" />
-        </SearchWrapper>
-
-        <AddButton>
-          Добавить
-          <AddIcon style={AddIconStyle} />
-        </AddButton>
-      </TopBarWrapper>
-
-      <ItemListWrapper>
-        <ShadowTop />
-
-        <ItemWrapper>
-          <ItemTopWrapper>
-            <ItemImage src={sneaker} />
-            <ItemMainInfoWrapper>
-              <ItemMainInfoTop>
-                <ItemName>YZY QNTM BARIUM</ItemName>
-                <ItemLink>Подробнее</ItemLink>
-                <ItemCost>250$</ItemCost>
-              </ItemMainInfoTop>
-              <ItemMainInfoBottom>
-                <ItemMainInfoBottomSection>
-                  <ItemMainInfoBottomTitle>Размер</ItemMainInfoBottomTitle>
-                  <ItemMainInfoBottomText>10 US</ItemMainInfoBottomText>
-                </ItemMainInfoBottomSection>
-
-                <ItemMainInfoBottomSection>
-                  <ItemMainInfoBottomTitle>Источник</ItemMainInfoBottomTitle>
-                  <ItemMainInfoBottomText>adidas</ItemMainInfoBottomText>
-                </ItemMainInfoBottomSection>
-
-                <ItemMainInfoBottomSection>
-                  <ItemMainInfoBottomTitle>Цвет</ItemMainInfoBottomTitle>
-                  <ItemMainInfoBottomText>VALORANT</ItemMainInfoBottomText>
-                </ItemMainInfoBottomSection>
-              </ItemMainInfoBottom>
-            </ItemMainInfoWrapper>
-
-            <ItemButtonsWrapper>
-              <ItemButton>Продано</ItemButton>
-              <ItemButton>Разместить</ItemButton>
-            </ItemButtonsWrapper>
-            {/* <ItemControls>control</ItemControls> */}
-          </ItemTopWrapper>
-
-          {/* <div
-            style={{ width: '100%', height: 30, backgroundColor: 'wheat' }}
-          ></div> */}
-        </ItemWrapper>
-        <ItemWrapper>
-          <ItemTopWrapper>
-            <ItemImage src={sneaker} />
-            <ItemMainInfoWrapper>
-              <ItemMainInfoTop>
-                <ItemName>YZY QNTM BARIUM</ItemName>
-                <ItemLink>Подробнее</ItemLink>
-                <ItemCost>250$</ItemCost>
-              </ItemMainInfoTop>
-              <ItemMainInfoBottom>
-                <ItemMainInfoBottomSection>
-                  <ItemMainInfoBottomTitle>Размер</ItemMainInfoBottomTitle>
-                  <ItemMainInfoBottomText>10 US</ItemMainInfoBottomText>
-                </ItemMainInfoBottomSection>
-
-                <ItemMainInfoBottomSection>
-                  <ItemMainInfoBottomTitle>Источник</ItemMainInfoBottomTitle>
-                  <ItemMainInfoBottomText>adidas</ItemMainInfoBottomText>
-                </ItemMainInfoBottomSection>
-
-                <ItemMainInfoBottomSection>
-                  <ItemMainInfoBottomTitle>Цвет</ItemMainInfoBottomTitle>
-                  <ItemMainInfoBottomText>VALORANT</ItemMainInfoBottomText>
-                </ItemMainInfoBottomSection>
-              </ItemMainInfoBottom>
-            </ItemMainInfoWrapper>
-
-            <ItemButtonsWrapper>
-              <ItemButton>Продано</ItemButton>
-              <ItemButton>Разместить</ItemButton>
-            </ItemButtonsWrapper>
-            {/* <ItemControls>control</ItemControls> */}
-          </ItemTopWrapper>
-
-          {/* <div
-            style={{ width: '100%', height: 30, backgroundColor: 'wheat' }}
-          ></div> */}
-        </ItemWrapper>
-
-        <ShadowBottom />
-      </ItemListWrapper>
-    </MainWrapper>
-  );
-};
-
-export default Stock;
