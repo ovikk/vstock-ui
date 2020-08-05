@@ -3,10 +3,11 @@ import styled from 'styled-components';
 
 import _ from 'lodash';
 
-const AutoComplete = ({ getFunction }) => {
+const AutoComplete = ({ getFunction, returnFunction }) => {
   const [inputValue, setInputValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [isItemSelected, setIsItemSelected] = useState(false);
+  const [showSuggestionsFlag, setShowSuggeestionsFlag] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const downHandler = ({ key }) => {
@@ -21,14 +22,19 @@ const AutoComplete = ({ getFunction }) => {
   };
 
   const enterHandler = ({ key }) => {
-    console.log(key);
     if (key === 'Enter') {
       setIsItemSelected(true);
     }
   };
 
   useEffect(() => {
-    console.log(suggestions[selectedIndex]);
+    const item = suggestions[selectedIndex];
+
+    if (item) {
+      setInputValue(`${item.make} ${item.name}`);
+      setShowSuggeestionsFlag(false);
+      returnFunction({ ...item, inputValue });
+    }
   }, [isItemSelected]);
 
   useEffect(() => {
@@ -52,21 +58,23 @@ const AutoComplete = ({ getFunction }) => {
   }, [selectedIndex, suggestions.length]);
 
   useEffect(() => {
-    setIsItemSelected(false);
+    if (showSuggestionsFlag) {
+      setIsItemSelected(false)
+      if (inputValue.length < 4) {
+        setSuggestions([]);
+      }
 
-    if (inputValue.length < 4) {
-      setSuggestions([]);
-    }
-
-    if (inputValue.length > 4) {
-      debounceOnChange(inputValue);
+      if (inputValue.length > 4) {
+        debounceOnChange(inputValue);
+      }
+    } else {
+      setShowSuggeestionsFlag(true);
     }
   }, [inputValue]);
 
   const onInputChange = async (value) => {
     if (value.length > 4) {
       const response = await getFunction(value);
-      console.log(response);
 
       if (!response.error) {
         setSuggestions(response.data);
@@ -86,19 +94,23 @@ const AutoComplete = ({ getFunction }) => {
         }}
       />
 
-      {suggestions.length > 0 && inputValue.length > 4 && !isItemSelected && (
-        <AutoCompleteSuggestions>
-          {suggestions.map((item, index) => (
-            <SingleSuggestionWrapper
-              style={{ display: 'flex' }}
-              isSelected={index === selectedIndex}
-            >
-              <SingleSuggestionImage src={item.thumbnail_url} />
-              <SingleSuggestionName>{`${item.make} ${item.name} ${item.colorway} (${item.style_id})`}</SingleSuggestionName>
-            </SingleSuggestionWrapper>
-          ))}
-        </AutoCompleteSuggestions>
-      )}
+      {suggestions.length > 0 &&
+        inputValue.length > 4 &&
+        !isItemSelected &&
+        showSuggestionsFlag && (
+          <AutoCompleteSuggestions>
+            {suggestions.map((item, index) => (
+              <SingleSuggestionWrapper
+                style={{ display: 'flex' }}
+                isSelected={index === selectedIndex}
+                key={index}
+              >
+                <SingleSuggestionImage src={item.thumbnail_url} />
+                <SingleSuggestionName>{`${item.make} ${item.name} ${item.colorway} (${item.style_id})`}</SingleSuggestionName>
+              </SingleSuggestionWrapper>
+            ))}
+          </AutoCompleteSuggestions>
+        )}
     </AutoCompleteWrapper>
   );
 };
@@ -146,7 +158,7 @@ const AutoCompleteInput = styled.input`
   color: ${({ theme }) => theme.colors.textColor};
   height: 30px;
   line-height: 50px;
-  width: 400px;
+  width: 450px;
   border: none;
   border-bottom: ${({ theme }) => `2px solid ${theme.colors.secondaryColor}`};
   margin-top: 20px;

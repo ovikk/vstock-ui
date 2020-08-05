@@ -9,6 +9,8 @@ const getInventoryByIdUrl = `${env.server}/api/v1/inventory`;
 const getOwnInventoryUrl = `${env.server}/api/v1/inventory`;
 const getSneakersSuggestionsUrl = `${env.server}/api/v1/item/suggests`;
 
+const addItemToInventoryUrl = `${env.server}/api/v1/item`;
+
 const apiFetch = async (url: string, opts: any) => {
   const response = await fetch(url, opts);
   const data = await response.json();
@@ -57,6 +59,10 @@ const getSneakersSuggestions = (input: string) => {
   return get(`${getSneakersSuggestionsUrl}?q=${input}`);
 };
 
+const addItemToInventory = (data: any) => {
+  return post(addItemToInventoryUrl, data);
+};
+
 const api = {
   login,
   registrate,
@@ -64,7 +70,8 @@ const api = {
   auth,
   getInventoryById,
   getOwnInventory,
-  getSneakersSuggestions
+  getSneakersSuggestions,
+  addItemToInventory
 };
 
 export default api;
