@@ -59,7 +59,7 @@ const AutoComplete = ({ getFunction, returnFunction }) => {
 
   useEffect(() => {
     if (showSuggestionsFlag) {
-      setIsItemSelected(false)
+      setIsItemSelected(false);
       if (inputValue.length < 4) {
         setSuggestions([]);
       }
@@ -92,6 +92,7 @@ const AutoComplete = ({ getFunction, returnFunction }) => {
         onChange={(e) => {
           setInputValue(e.target.value);
         }}
+        placeholder="Например YEEZY BOOST"
       />
 
       {suggestions.length > 0 &&
@@ -104,6 +105,8 @@ const AutoComplete = ({ getFunction, returnFunction }) => {
                 style={{ display: 'flex' }}
                 isSelected={index === selectedIndex}
                 key={index}
+                onClick={() => setIsItemSelected(true)}
+                onMouseEnter={() => setSelectedIndex(index)}
               >
                 <SingleSuggestionImage src={item.thumbnail_url} />
                 <SingleSuggestionName>{`${item.make} ${item.name} ${item.colorway} (${item.style_id})`}</SingleSuggestionName>
@@ -126,7 +129,7 @@ const SingleSuggestionWrapper = styled.div`
   display: flex;
   align-items: center;
   margin: 5px 0px;
-
+  cursor: pointer;
   background-color: ${({ isSelected }) => (isSelected ? '#7f7f7f' : 'inherit')};
 `;
 

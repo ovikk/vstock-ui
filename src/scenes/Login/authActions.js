@@ -13,7 +13,7 @@ export function auth() {
     dispatch(actions.setIsLoading(true))
     const response = await Api.auth();
 
-    if (!response.error) {
+    if (!response.error && !!response.data.is_logged_in) {
       dispatch(actions.setUser(response));
     }
     dispatch(actions.setIsLoading(false))
@@ -25,7 +25,7 @@ export function login(email, password) {
     dispatch(actions.setIsLoading(true))
     const response = await Api.login(email, password);
 
-    if (response.error) {
+    if (response.error  ) {
       dispatch(actions.setLogInError(response.error.message));
     } else {
       dispatch(actions.setUser(response));

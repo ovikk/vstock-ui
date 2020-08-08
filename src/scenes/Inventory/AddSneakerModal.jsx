@@ -3,19 +3,16 @@ import styled from 'styled-components';
 import Dialog from '@material-ui/core/Dialog';
 import CloseIconInit from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
+import Select from '@material-ui/core/Select';
+import Button from '@material-ui/core/Button';
+import MenuItem from '@material-ui/core/MenuItem';
 import AutoComplete from 'scenes/Inventory/AutoComplete';
 import Api from 'Api';
 
 import theme from 'theme';
 import Sneaker from './Sneaker';
 
-const testItems = [
-  'YEEZY BOOST',
-  'NIKE JORDAN',
-  'LOL KEK',
-  'NIKE JORDAN',
-  'YEEZY BOOST',
-];
+const currencies = ['USD', 'RUB'];
 
 const AddSneakerModal = ({ showModal, onClose }) => {
   const [sneakerData, setSneakerData] = useState({
@@ -23,9 +20,13 @@ const AddSneakerModal = ({ showModal, onClose }) => {
     style_id: '',
     colorway: '',
     brand: '',
+    buy_price: '',
+    sell_price: '',
+    size: '',
+    currency: 'USD',
   });
 
-  const renderMainInput = (gridArea, title, dataKey) => {
+  const renderMainInput = (gridArea, title, dataKey, isNumber = false) => {
     return (
       <MainInfoInputWrapper gridArea={gridArea}>
         <MainInfoInputTitle>{title}</MainInfoInputTitle>
@@ -33,17 +34,53 @@ const AddSneakerModal = ({ showModal, onClose }) => {
           value={sneakerData[dataKey]}
           onChange={(e) => {
             const newData = { ...sneakerData };
-
             newData[dataKey] = e.target.value;
-
             setSneakerData(newData);
           }}
+          placeholder="-"
+          type={isNumber ? 'number' : 'text'}
         />
       </MainInfoInputWrapper>
     );
   };
 
-  console.log({ sneakerData });
+  const rencerMainSelect = (gridArea, title, dataKey, selectData) => {
+    return (
+      <MainInfoInputWrapper gridArea={gridArea}>
+        <MainInfoInputTitle>{title}</MainInfoInputTitle>
+        <MainSelect
+          value={sneakerData.currency}
+          onChange={(e) => {
+            const newData = { ...sneakerData };
+            newData[dataKey] = e.target.value;
+            setSneakerData(newData);
+          }}
+        >
+          {selectData.map((d, i) => (
+            <MenuItem value={d} key={i}>
+              {d}
+            </MenuItem>
+          ))}
+        </MainSelect>
+      </MainInfoInputWrapper>
+    );
+  };
+
+  const setSneakerDataFromAutoComplete = (data) => {
+    console.log(data);
+
+    const { brand, colorway, style_id, image_url, retail_price } = data;
+
+    setSneakerData({
+      brand,
+      colorway,
+      style_id,
+      image_url,
+      buy_price: retail_price,
+    });
+  };
+
+  console.log(sneakerData)
 
   return (
     <Dialog onClose={onClose} open={showModal} maxWidth="lg">
@@ -61,7 +98,7 @@ const AddSneakerModal = ({ showModal, onClose }) => {
 
         <AutoComplete
           getFunction={Api.getSneakersSuggestions}
-          returnFunction={(e) => setSneakerData(e)}
+          returnFunction={(data) => setSneakerDataFromAutoComplete(data)}
         />
 
         <MainInfoWrapper>
@@ -74,15 +111,14 @@ const AddSneakerModal = ({ showModal, onClose }) => {
           <MainInfoInputsWrapper>
             {renderMainInput('a', 'Артикул', 'style_id')}
             {renderMainInput('b', 'Цвет', 'colorway')}
-            {renderMainInput('c', 'Цена покупки')}
-            {renderMainInput('d', 'Цена доставки')}
-            {renderMainInput('e', 'Валюта')}
+            {renderMainInput('c', 'Цена покупки', 'buy_price', true)}
+            {renderMainInput('d', 'Цена продажи', 'sell_price', true)}
+            {rencerMainSelect('e', 'Валюта', 'currency', currencies)}
             {renderMainInput('f', 'Бренд', 'brand')}
-            {renderMainInput('g', 'Размер')}
+            {renderMainInput('g', 'Размер', 'size')}
           </MainInfoInputsWrapper>
         </MainInfoWrapper>
-        <button
-          style={{ marginTop: 'auto' }}
+        <AddButton
           disabled={!sneakerData.style_id || !sneakerData.name}
           onClick={async () => {
             await Api.addItemToInventory({
@@ -92,7 +128,7 @@ const AddSneakerModal = ({ showModal, onClose }) => {
           }}
         >
           Добавить
-        </button>
+        </AddButton>
       </MainWrapper>
     </Dialog>
   );
@@ -166,7 +202,34 @@ const Input = styled.input`
   border: none;
   border-bottom: ${({ theme }) =>
     `2px solid ${theme.colors.secondaryBackground}`};
-  /* margin-top: 20px; */
+
+  ::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  ::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  -moz-appearance: textfield;
+`;
+
+const MainSelect = styled(Select)`
+  && {
+    color: ${({ theme }) => theme.colors.textColor};
+
+    &:before {
+      border-color: ${({ theme }) => theme.colors.secondaryBackground};
+    }
+
+    &:after {
+      border-color: ${({ theme }) => theme.colors.secondaryBackground};
+    }
+
+    svg {
+      fill: ${({ theme }) => theme.colors.secondaryBackground};
+    }
+  }
 `;
 
 const TopTitleWrapper = styled.div`
@@ -185,5 +248,13 @@ const TitleText = styled.span`
 const CloseIcon = styled(CloseIconInit)`
   && {
     color: ${({ theme }) => theme.colors.nonFocusedTextColor};
+  }
+`;
+
+const AddButton = styled(Button)`
+  && {
+    margin-top: auto;
+    width: 100%;
+    background-color: ${({ theme }) => theme.colors.approveColor};
   }
 `;
