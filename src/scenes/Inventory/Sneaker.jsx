@@ -100,7 +100,7 @@ const ItemCost = styled.span`
   color: ${({ theme }) => theme.colors.textColor};
   font-size: 30px;
   font-family: ${({ theme }) => theme.fontBold};
-  margin-left: 50px;
+  margin-left: auto;
 `;
 
 const ItemMainInfoBottom = styled.div`

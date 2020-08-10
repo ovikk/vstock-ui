@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import Dialog from '@material-ui/core/Dialog';
 import CloseIconInit from '@material-ui/icons/Close';
@@ -8,6 +9,7 @@ import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import AutoComplete from 'scenes/Inventory/AutoComplete';
 import Api from 'Api';
+import { fetchOwnInventoryItems } from './inventoryActions';
 
 import theme from 'theme';
 import Sneaker from './Sneaker';
@@ -25,6 +27,8 @@ const AddSneakerModal = ({ showModal, onClose }) => {
     size: '',
     currency: 'USD',
   });
+
+  const dispatch = useDispatch();
 
   const renderMainInput = (gridArea, title, dataKey, isNumber = false) => {
     return (
@@ -69,18 +73,42 @@ const AddSneakerModal = ({ showModal, onClose }) => {
   const setSneakerDataFromAutoComplete = (data) => {
     console.log(data);
 
-    const { brand, colorway, style_id, image_url, retail_price } = data;
+    const {
+      brand,
+      colorway,
+      style_id,
+      image_url,
+      retail_price,
+      make,
+      name,
+    } = data;
 
-    setSneakerData({
+    setSneakerData((data) => ({
+      ...data,
       brand,
       colorway,
       style_id,
       image_url,
       buy_price: retail_price,
-    });
+      name: make + ' ' + name,
+    }));
   };
 
-  console.log(sneakerData)
+  const onAddItemClick = async () => {
+    const response = await Api.addItemToInventory({
+      inventory_id: 1,
+      ...sneakerData,
+      buy_price:
+        sneakerData.buy_price !== '' ? parseFloat(sneakerData.buy_price) : 0,
+      sell_price:
+        sneakerData.sell_price !== '' ? parseFloat(sneakerData.sell_price) : 0,
+    });
+
+    if (!response.error) {
+      dispatch(fetchOwnInventoryItems())
+      onClose()
+    }
+  };
 
   return (
     <Dialog onClose={onClose} open={showModal} maxWidth="lg">
@@ -120,12 +148,7 @@ const AddSneakerModal = ({ showModal, onClose }) => {
         </MainInfoWrapper>
         <AddButton
           disabled={!sneakerData.style_id || !sneakerData.name}
-          onClick={async () => {
-            await Api.addItemToInventory({
-              inventory_id: 1,
-              ...sneakerData,
-            });
-          }}
+          onClick={onAddItemClick}
         >
           Добавить
         </AddButton>
@@ -256,5 +279,9 @@ const AddButton = styled(Button)`
     margin-top: auto;
     width: 100%;
     background-color: ${({ theme }) => theme.colors.approveColor};
+
+    :hover {
+      background-color: pink;
+    }
   }
 `;

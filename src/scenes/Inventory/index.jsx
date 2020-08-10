@@ -29,7 +29,11 @@ const Inventory = () => {
   const renderItemList = () => {
     if (isFetchingItems) return <div>Spinner</div>;
 
-    if (items === undefined) return null;
+    if (!items) return null;
+
+    items.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+    console.log({ items });
 
     return items.map((item, index) => <Sneaker key={index} item={item} />);
   };

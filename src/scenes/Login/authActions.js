@@ -25,9 +25,10 @@ export function login(email, password) {
     dispatch(actions.setIsLoading(true))
     const response = await Api.login(email, password);
 
-    if (response.error  ) {
+    if (response.error) {
       dispatch(actions.setLogInError(response.error.message));
     } else {
+      console.log('LOGIN', {response})
       dispatch(actions.setUser(response));
     }
 
@@ -43,6 +44,7 @@ export function registrate(email, password) {
     if (response.error) {
       dispatch(actions.setLogInError(response.error.message));
     } else {
+      console.log('REGISTRATE', {response})
       dispatch(actions.setUser(response));
     }
     dispatch(actions.setIsLoading(false))
