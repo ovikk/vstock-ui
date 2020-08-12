@@ -12,10 +12,16 @@ const getSneakersSuggestionsUrl = `${env.server}/api/v1/item/suggests`;
 const addItemToInventoryUrl = `${env.server}/api/v1/item`;
 
 const apiFetch = async (url: string, opts: any) => {
-  const response = await fetch(url, opts);
-  const data = await response.json();
-
-  return data;
+  try {
+    const response = await fetch(url, opts);
+    const data = await response.json();
+    return data;
+  } catch (e) {
+    console.log('oh shit');
+    return {
+      error: e,
+    };
+  }
 };
 
 const get = (url: string) =>
@@ -27,6 +33,13 @@ const get = (url: string) =>
 const post = (url: string, body: unknown) =>
   apiFetch(url, {
     method: 'post',
+    body: JSON.stringify(body),
+    credentials: 'include',
+  });
+
+const put = (url: string, body: unknown) =>
+  apiFetch(url, {
+    method: 'put',
     body: JSON.stringify(body),
     credentials: 'include',
   });
@@ -63,6 +76,10 @@ const addItemToInventory = (data: any) => {
   return post(addItemToInventoryUrl, data);
 };
 
+const editItem = (data: any) => {
+  return put(addItemToInventoryUrl, data);
+};
+
 const api = {
   login,
   registrate,
@@ -71,7 +88,8 @@ const api = {
   getInventoryById,
   getOwnInventory,
   getSneakersSuggestions,
-  addItemToInventory
+  addItemToInventory,
+  editItem,
 };
 
 export default api;

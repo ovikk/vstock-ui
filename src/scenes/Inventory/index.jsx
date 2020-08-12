@@ -8,17 +8,43 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 
 import Sneaker from './Sneaker';
-import AddSneakerModal from './AddSneakerModal';
+import AddSneakerModal from './AddSneaker';
 
 import { fetchOwnInventoryItems } from './inventoryActions';
 
 const Inventory = () => {
   const [stockState, setStockState] = useState(0);
-  const [showAddSneakerModal, setShowAddSneakerModal] = useState(true);
+  const [showAddSneakerModal, setShowAddSneakerModal] = useState(false);
+  const [showEditSneakerModal, setShowEditSneakerModal] = useState(false);
+
+  const [editSneakerData, setEditSneakerData] = useState({});
 
   const dispatch = useDispatch();
 
   const { items, isFetchingItems } = useSelector((state) => state.inventory);
+
+  const onEditClick = (item) => {
+    const { sneaker, id, currency, size, sell_price, buy_price, brand, name } = item;
+
+    console.log(item)
+
+    const editSneakerData = {
+      id,
+      name: name || '',
+      image_url: sneaker.image_url,
+      style_id: sneaker.style_id,
+      colorway: sneaker.colorway || '',
+      brand: brand || '',
+      buy_price: buy_price || '',
+      sell_price: sell_price || '',
+      size: size || '',
+      currency: currency || 'RUB',
+      is_item_public: 'Виден всем',
+    };
+
+    setEditSneakerData(editSneakerData);
+    setShowEditSneakerModal(true);
+  };
 
   useEffect(() => {
     if (items === undefined) {
@@ -33,15 +59,29 @@ const Inventory = () => {
 
     items.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-    return items.map((item, index) => <Sneaker key={index} item={item} />);
+    return items.map((item, index) => (
+      <Sneaker key={index} item={item} onEditClick={onEditClick} />
+    ));
   };
 
   return (
     <MainWrapper>
-      <AddSneakerModal
-        showModal={showAddSneakerModal}
-        onClose={() => setShowAddSneakerModal(false)}
-      />
+      {showAddSneakerModal && (
+        <AddSneakerModal
+          showModal={showAddSneakerModal}
+          onClose={() => setShowAddSneakerModal(false)}
+          isEdit={false}
+        />
+      )}
+
+      {showEditSneakerModal && (
+        <AddSneakerModal
+          showModal={showEditSneakerModal}
+          onClose={() => setShowEditSneakerModal(false)}
+          editSneakerData={editSneakerData}
+          isEdit={true}
+        />
+      )}
 
       <StockSwithcerWrapper>
         <StockSwitcherTab

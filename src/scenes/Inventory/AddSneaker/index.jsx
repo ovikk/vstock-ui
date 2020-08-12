@@ -7,12 +7,9 @@ import IconButton from '@material-ui/core/IconButton';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
-import AutoComplete from 'scenes/Inventory/AutoComplete';
+import AutoComplete from 'scenes/Inventory/AddSneaker/AutoComplete';
 import Api from 'Api';
-import { fetchOwnInventoryItems } from './inventoryActions';
-
-import theme from 'theme';
-import Sneaker from './Sneaker';
+import { fetchOwnInventoryItems } from '../inventoryActions';
 
 const currencies = ['RUB', 'USD'];
 const isItemPublicSelections = ['Виден всем', 'Виден только себе'];
@@ -29,9 +26,11 @@ const initSneakerData = {
   is_item_public: isItemPublicSelections[0],
 };
 
-const AddSneakerModal = ({ showModal, onClose }) => {
-  const [sneakerData, setSneakerData] = useState({ ...initSneakerData });
-  const [itemName, setItemName] = useState('')
+const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
+  const [sneakerData, setSneakerData] = useState(
+    isEdit ? { ...editSneakerData } : { ...initSneakerData }
+  );
+  const [itemName, setItemName] = useState(isEdit ? editSneakerData.name : '');
   const dispatch = useDispatch();
 
   const renderMainInput = (gridArea, title, dataKey, isNumber = false) => {
@@ -75,14 +74,7 @@ const AddSneakerModal = ({ showModal, onClose }) => {
   };
 
   const setSneakerDataFromAutoComplete = (data) => {
-
-    const {
-      brand,
-      colorway,
-      style_id,
-      image_url,
-      retail_price,
-    } = data;
+    const { brand, colorway, style_id, image_url, retail_price } = data;
 
     setSneakerData((data) => ({
       ...data,
@@ -96,7 +88,7 @@ const AddSneakerModal = ({ showModal, onClose }) => {
   };
 
   const onAddItemClick = async () => {
-    const response = await Api.addItemToInventory({
+    const data = {
       inventory_id: 1,
       ...sneakerData,
       name: itemName,
@@ -105,7 +97,15 @@ const AddSneakerModal = ({ showModal, onClose }) => {
       sell_price:
         sneakerData.sell_price !== '' ? parseFloat(sneakerData.sell_price) : 0,
       is_item_public: sneakerData.is_item_public === isItemPublicSelections[0],
-    });
+    };
+
+    let response;
+
+    if (isEdit) {
+      response = await Api.editItem({ ...data, id: sneakerData.id });
+    } else {
+      response = await Api.addItemToInventory(data);
+    }
 
     if (!response.error) {
       dispatch(fetchOwnInventoryItems());
@@ -133,6 +133,7 @@ const AddSneakerModal = ({ showModal, onClose }) => {
           returnFunction={(data) => setSneakerDataFromAutoComplete(data)}
           inputValue={itemName}
           setInputValue={setItemName}
+          isEdit={isEdit}
         />
 
         <MainInfoWrapper>
@@ -162,7 +163,7 @@ const AddSneakerModal = ({ showModal, onClose }) => {
           disabled={!sneakerData.style_id || itemName.length < 2}
           onClick={onAddItemClick}
         >
-          Добавить
+          {isEdit ? 'Редактировать' : 'Добавить'}
         </AddButton>
       </MainWrapper>
     </Dialog>

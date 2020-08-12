@@ -1,14 +1,22 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 import _ from 'lodash';
 
-const AutoComplete = ({ getFunction, returnFunction, inputValue, setInputValue }) => {
+const AutoComplete = ({
+  getFunction,
+  returnFunction,
+  inputValue,
+  setInputValue,
+  isEdit,
+}) => {
   // const [inputValue, setInputValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [isItemSelected, setIsItemSelected] = useState(false);
   const [showSuggestionsFlag, setShowSuggeestionsFlag] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const isRendered = useRef(false);
 
   const downHandler = ({ key }) => {
     if (key === 'ArrowDown') {
@@ -38,6 +46,25 @@ const AutoComplete = ({ getFunction, returnFunction, inputValue, setInputValue }
   }, [isItemSelected]);
 
   useEffect(() => {
+    console.log('kke', isRendered.current);
+    if (isRendered.current) {
+      if (showSuggestionsFlag) {
+        setIsItemSelected(false);
+        if (inputValue.length < 4) {
+          setSuggestions([]);
+        }
+
+        if (inputValue.length > 4) {
+          debounceOnChange(inputValue);
+        }
+      } else {
+        setShowSuggeestionsFlag(true);
+      }
+    }
+  }, [inputValue]);
+
+  useEffect(() => {
+    isRendered.current = true;
     window.addEventListener('keydown', downHandler);
     window.addEventListener('keyup', upHandler);
     window.addEventListener('keypress', enterHandler);
@@ -57,21 +84,6 @@ const AutoComplete = ({ getFunction, returnFunction, inputValue, setInputValue }
     }
   }, [selectedIndex, suggestions.length]);
 
-  useEffect(() => {
-    if (showSuggestionsFlag) {
-      setIsItemSelected(false);
-      if (inputValue.length < 4) {
-        setSuggestions([]);
-      }
-
-      if (inputValue.length > 4) {
-        debounceOnChange(inputValue);
-      }
-    } else {
-      setShowSuggeestionsFlag(true);
-    }
-  }, [inputValue]);
-
   const onInputChange = async (value) => {
     if (value.length > 4) {
       const response = await getFunction(value);
@@ -87,7 +99,7 @@ const AutoComplete = ({ getFunction, returnFunction, inputValue, setInputValue }
   return (
     <AutoCompleteWrapper>
       <AutoCompleteInput
-        autoFocus
+        autoFocus={!isEdit}
         value={inputValue}
         onChange={(e) => {
           setInputValue(e.target.value);

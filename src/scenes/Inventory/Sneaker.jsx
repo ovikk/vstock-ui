@@ -2,27 +2,42 @@ import React from 'react';
 import styled from 'styled-components';
 import theme from 'theme';
 
-const Sneaker = ({ item }) => {
+import CloseIcon from '@material-ui/icons/Close';
+import EditIcon from '@material-ui/icons/Edit';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
+
+const Sneaker = ({ item, onEditClick }) => {
   const { sneaker } = item;
 
   const renderCurrency = (currency) => {
     if (currency === 'USD') return '$';
-    if (currency === 'RUB') return '₽';
-    return '-';
+    return '₽';
+  };
+
+  const onEditIconClick = () => {
+    onEditClick(item);
   };
 
   return (
     <ItemWrapper>
       <ItemTopWrapper>
-        <ItemImage src={sneaker.image_url} />
+        <ItemImage
+          src={
+            sneaker.image_url ||
+            'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'
+          }
+        />
         <ItemMainInfoWrapper>
           <ItemMainInfoTop>
             <ItemName>{item.name}</ItemName>
             <ItemLink>Подробнее</ItemLink>
-            <ItemCost>
-              {item.sell_price}
-              {renderCurrency(item.currency)}
-            </ItemCost>
+            <ItemConstWrapper>
+              <ItemCost>
+                {item.sell_price}
+                {renderCurrency(item.currency)}
+              </ItemCost>
+            </ItemConstWrapper>
           </ItemMainInfoTop>
           <ItemMainInfoBottom>
             <ItemMainInfoBottomSection>
@@ -48,8 +63,21 @@ const Sneaker = ({ item }) => {
           <ItemButton>Продано</ItemButton>
           <ItemButton>Разместить</ItemButton>
         </ItemButtonsWrapper>
+
+        <ItemControls>
+          <Tooltip title="Удалить">
+            <IconButton>
+              <CloseIcon style={ItemControlImageStyle} />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Редактировать">
+            <IconButton onClick={onEditIconClick}>
+              <EditIcon style={ItemControlImageStyle} />
+            </IconButton>
+          </Tooltip>
+        </ItemControls>
       </ItemTopWrapper>
-      {/* <ItemControls>control</ItemControls> */}
     </ItemWrapper>
   );
 };
@@ -57,7 +85,7 @@ const Sneaker = ({ item }) => {
 export default Sneaker;
 
 const ItemWrapper = styled.div`
-  width: 1000px;
+  width: 100%;
   background-color: ${({ theme }) => theme.colors.lightBackground};
   border-radius: 10px;
   margin-bottom: 25px;
@@ -75,7 +103,7 @@ const ItemTopWrapper = styled.div`
 `;
 const ItemImage = styled.img`
   height: 90%;
-  width: auto;
+  width: 150px;
   margin-right: 10px;
 `;
 const ItemMainInfoWrapper = styled.div`
@@ -84,6 +112,8 @@ const ItemMainInfoWrapper = styled.div`
   height: 75%;
   align-self: center;
   margin: 0px 20px;
+
+  width: 70%;
 `;
 const ItemMainInfoTop = styled.div`
   display: flex;
@@ -97,19 +127,27 @@ const ItemName = styled.span`
   color: ${({ theme }) => theme.colors.textColor};
   font-size: 25px;
   margin-right: 30px;
+  width: 70%;
 `;
 
 const ItemLink = styled.span`
   color: ${({ theme }) => theme.colors.mainColor};
   text-decoration: underline;
   cursor: pointer;
+  margin: 0px 20px;
+`;
+
+const ItemConstWrapper = styled.div`
+  margin-left: auto;
+  min-width: 100px;
+  display: flex;
+  justify-content: flex-end;
 `;
 
 const ItemCost = styled.span`
   color: ${({ theme }) => theme.colors.textColor};
   font-size: 30px;
   font-family: ${({ theme }) => theme.fontBold};
-  margin-left: auto;
 `;
 
 const ItemMainInfoBottom = styled.div`
@@ -169,11 +207,18 @@ const ItemButton = styled.button`
 `;
 
 const ItemControls = styled.div`
-  background-color: orange;
   height: 100%;
-  width: 50px;
+  width: 40px;
   margin: 0px 10px;
+  box-sizing: border-box;
+  padding: 15px 10px;
 `;
+
+const ItemControlImageStyle = {
+  height: '20px',
+  width: 'auto',
+  color: theme.colors.nonFocusedTextColor,
+};
 
 const AddIconStyle = {
   height: '70%',
