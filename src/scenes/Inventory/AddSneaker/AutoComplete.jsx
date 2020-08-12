@@ -46,7 +46,6 @@ const AutoComplete = ({
   }, [isItemSelected]);
 
   useEffect(() => {
-    console.log('kke', isRendered.current);
     if (isRendered.current) {
       if (showSuggestionsFlag) {
         setIsItemSelected(false);
