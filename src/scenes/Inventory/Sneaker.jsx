@@ -1,11 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
-import theme from 'theme'
+import theme from 'theme';
 
-const Sneaker = ({item}) => {
+const Sneaker = ({ item }) => {
+  const { sneaker } = item;
 
-
-    const {sneaker} = item
+  const renderCurrency = (currency) => {
+    if (currency === 'USD') return '$';
+    if (currency === 'RUB') return '₽';
+    return '-';
+  };
 
   return (
     <ItemWrapper>
@@ -13,9 +17,12 @@ const Sneaker = ({item}) => {
         <ItemImage src={sneaker.image_url} />
         <ItemMainInfoWrapper>
           <ItemMainInfoTop>
-            <ItemName>{sneaker.make}</ItemName>
+            <ItemName>{item.name}</ItemName>
             <ItemLink>Подробнее</ItemLink>
-            <ItemCost>{item.sell_price}$</ItemCost>
+            <ItemCost>
+              {item.sell_price}
+              {renderCurrency(item.currency)}
+            </ItemCost>
           </ItemMainInfoTop>
           <ItemMainInfoBottom>
             <ItemMainInfoBottomSection>
@@ -30,7 +37,9 @@ const Sneaker = ({item}) => {
 
             <ItemMainInfoBottomSection>
               <ItemMainInfoBottomTitle>Цвет</ItemMainInfoBottomTitle>
-              <ItemMainInfoBottomText>{sneaker.colorway}</ItemMainInfoBottomText>
+              <ItemMainInfoBottomText>
+                {sneaker.colorway}
+              </ItemMainInfoBottomText>
             </ItemMainInfoBottomSection>
           </ItemMainInfoBottom>
         </ItemMainInfoWrapper>
@@ -40,7 +49,7 @@ const Sneaker = ({item}) => {
           <ItemButton>Разместить</ItemButton>
         </ItemButtonsWrapper>
       </ItemTopWrapper>
-       {/* <ItemControls>control</ItemControls> */}
+      {/* <ItemControls>control</ItemControls> */}
     </ItemWrapper>
   );
 };

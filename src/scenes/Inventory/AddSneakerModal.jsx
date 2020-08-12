@@ -14,20 +14,24 @@ import { fetchOwnInventoryItems } from './inventoryActions';
 import theme from 'theme';
 import Sneaker from './Sneaker';
 
-const currencies = ['USD', 'RUB'];
+const currencies = ['RUB', 'USD'];
+const isItemPublicSelections = ['Виден всем', 'Виден только себе'];
+
+const initSneakerData = {
+  image_url: '',
+  style_id: '',
+  colorway: '',
+  brand: '',
+  buy_price: '',
+  sell_price: '',
+  size: '',
+  currency: currencies[0],
+  is_item_public: isItemPublicSelections[0],
+};
 
 const AddSneakerModal = ({ showModal, onClose }) => {
-  const [sneakerData, setSneakerData] = useState({
-    image_url: '',
-    style_id: '',
-    colorway: '',
-    brand: '',
-    buy_price: '',
-    sell_price: '',
-    size: '',
-    currency: 'USD',
-  });
-
+  const [sneakerData, setSneakerData] = useState({ ...initSneakerData });
+  const [itemName, setItemName] = useState('')
   const dispatch = useDispatch();
 
   const renderMainInput = (gridArea, title, dataKey, isNumber = false) => {
@@ -48,12 +52,12 @@ const AddSneakerModal = ({ showModal, onClose }) => {
     );
   };
 
-  const rencerMainSelect = (gridArea, title, dataKey, selectData) => {
+  const renderMainSelect = (gridArea, title, dataKey, selectData) => {
     return (
       <MainInfoInputWrapper gridArea={gridArea}>
         <MainInfoInputTitle>{title}</MainInfoInputTitle>
         <MainSelect
-          value={sneakerData.currency}
+          value={sneakerData[dataKey]}
           onChange={(e) => {
             const newData = { ...sneakerData };
             newData[dataKey] = e.target.value;
@@ -71,7 +75,6 @@ const AddSneakerModal = ({ showModal, onClose }) => {
   };
 
   const setSneakerDataFromAutoComplete = (data) => {
-    console.log(data);
 
     const {
       brand,
@@ -79,8 +82,6 @@ const AddSneakerModal = ({ showModal, onClose }) => {
       style_id,
       image_url,
       retail_price,
-      make,
-      name,
     } = data;
 
     setSneakerData((data) => ({
@@ -90,7 +91,7 @@ const AddSneakerModal = ({ showModal, onClose }) => {
       style_id,
       image_url,
       buy_price: retail_price,
-      name: make + ' ' + name,
+      name: itemName,
     }));
   };
 
@@ -98,15 +99,18 @@ const AddSneakerModal = ({ showModal, onClose }) => {
     const response = await Api.addItemToInventory({
       inventory_id: 1,
       ...sneakerData,
+      name: itemName,
       buy_price:
         sneakerData.buy_price !== '' ? parseFloat(sneakerData.buy_price) : 0,
       sell_price:
         sneakerData.sell_price !== '' ? parseFloat(sneakerData.sell_price) : 0,
+      is_item_public: sneakerData.is_item_public === isItemPublicSelections[0],
     });
 
     if (!response.error) {
-      dispatch(fetchOwnInventoryItems())
-      onClose()
+      dispatch(fetchOwnInventoryItems());
+      setSneakerData({ ...initSneakerData });
+      onClose();
     }
   };
 
@@ -127,6 +131,8 @@ const AddSneakerModal = ({ showModal, onClose }) => {
         <AutoComplete
           getFunction={Api.getSneakersSuggestions}
           returnFunction={(data) => setSneakerDataFromAutoComplete(data)}
+          inputValue={itemName}
+          setInputValue={setItemName}
         />
 
         <MainInfoWrapper>
@@ -141,13 +147,19 @@ const AddSneakerModal = ({ showModal, onClose }) => {
             {renderMainInput('b', 'Цвет', 'colorway')}
             {renderMainInput('c', 'Цена покупки', 'buy_price', true)}
             {renderMainInput('d', 'Цена продажи', 'sell_price', true)}
-            {rencerMainSelect('e', 'Валюта', 'currency', currencies)}
+            {renderMainSelect('e', 'Валюта', 'currency', currencies)}
             {renderMainInput('f', 'Бренд', 'brand')}
             {renderMainInput('g', 'Размер', 'size')}
+            {renderMainSelect(
+              'h',
+              'Приватность',
+              'is_item_public',
+              isItemPublicSelections
+            )}
           </MainInfoInputsWrapper>
         </MainInfoWrapper>
         <AddButton
-          disabled={!sneakerData.style_id || !sneakerData.name}
+          disabled={!sneakerData.style_id || itemName.length < 2}
           onClick={onAddItemClick}
         >
           Добавить
@@ -190,13 +202,14 @@ const SneakerImage = styled.img`
 `;
 
 const MainInfoInputsWrapper = styled.div`
-  flex: 5;
+  flex: 6;
   height: 100%;
   display: grid;
   grid-template:
     'a b b' auto
     'c d e' auto
-    'f g .' auto / 1fr 1fr 1fr;
+    'f g .'
+    'h h .' auto / 1fr 1fr 1fr;
 `;
 
 const MainInfoInputWrapper = styled.div`

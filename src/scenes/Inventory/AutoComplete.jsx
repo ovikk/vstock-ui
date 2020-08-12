@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import _ from 'lodash';
 
-const AutoComplete = ({ getFunction, returnFunction }) => {
-  const [inputValue, setInputValue] = useState('');
+const AutoComplete = ({ getFunction, returnFunction, inputValue, setInputValue }) => {
+  // const [inputValue, setInputValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [isItemSelected, setIsItemSelected] = useState(false);
   const [showSuggestionsFlag, setShowSuggeestionsFlag] = useState(true);
