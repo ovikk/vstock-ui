@@ -26,8 +26,6 @@ const Inventory = () => {
   const onEditClick = (item) => {
     const { sneaker, id, currency, size, sell_price, buy_price, brand, name } = item;
 
-    console.log(item)
-
     const editSneakerData = {
       id,
       name: name || '',
