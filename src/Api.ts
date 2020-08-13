@@ -9,7 +9,7 @@ const getInventoryByIdUrl = `${env.server}/api/v1/inventory`;
 const getOwnInventoryUrl = `${env.server}/api/v1/inventory`;
 const getSneakersSuggestionsUrl = `${env.server}/api/v1/item/suggests`;
 
-const addItemToInventoryUrl = `${env.server}/api/v1/item`;
+const itemUrl = `${env.server}/api/v1/item`;
 
 const apiFetch = async (url: string, opts: any) => {
   try {
@@ -27,6 +27,12 @@ const apiFetch = async (url: string, opts: any) => {
 const get = (url: string) =>
   apiFetch(url, {
     method: 'get',
+    credentials: 'include',
+  });
+
+const _delete = (url: string) =>
+  apiFetch(url, {
+    method: 'delete',
     credentials: 'include',
   });
 
@@ -73,11 +79,15 @@ const getSneakersSuggestions = (input: string) => {
 };
 
 const addItemToInventory = (data: any) => {
-  return post(addItemToInventoryUrl, data);
+  return post(itemUrl, data);
 };
 
 const editItem = (data: any) => {
-  return put(addItemToInventoryUrl, data);
+  return put(itemUrl, data);
+};
+
+const deleteItem = (itemId: number) => {
+  return _delete(`${itemUrl}/${itemId}`);
 };
 
 const api = {
@@ -90,6 +100,7 @@ const api = {
   getSneakersSuggestions,
   addItemToInventory,
   editItem,
+  deleteItem,
 };
 
 export default api;

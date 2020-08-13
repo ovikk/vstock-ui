@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Dialog from '@material-ui/core/Dialog';
 import CloseIconInit from '@material-ui/icons/Close';
@@ -29,7 +29,9 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
     isEdit ? { ...editSneakerData } : { ...initSneakerData }
   );
   const [itemName, setItemName] = useState(isEdit ? editSneakerData.name : '');
+  const { ownInventoryId } = useSelector((state) => state.inventory);
   const dispatch = useDispatch();
+
 
   const renderMainInput = (gridArea, title, dataKey, isNumber = false) => {
     return (
@@ -87,7 +89,7 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
 
   const onAddItemClick = async () => {
     const data = {
-      inventory_id: 1,
+      inventory_id: ownInventoryId,
       ...sneakerData,
       name: itemName,
       buy_price:
@@ -158,7 +160,11 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
           </MainInfoInputsWrapper>
         </MainInfoWrapper>
         <AddButton
-          disabled={!sneakerData.style_id || itemName.length < 2 || !sizes.includes(sneakerData.size)}
+          disabled={
+            !sneakerData.style_id ||
+            itemName.length < 2 ||
+            !sizes.includes(sneakerData.size)
+          }
           onClick={onAddItemClick}
         >
           {isEdit ? 'Редактировать' : 'Добавить'}

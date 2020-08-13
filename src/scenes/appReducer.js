@@ -7,9 +7,8 @@ const defaultState = {
 
 export default handleActions(
   {
-    [appActions.setOwnInventoryId]: (state, action) => {
-      return { ...state, ownInventoryId: action.payload };
-    },
+
+    
   },
   defaultState
 );

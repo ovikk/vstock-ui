@@ -4,6 +4,7 @@ import Api from 'Api';
 const actions = {
   setIsFetching: createAction('SET_IS_FETCHING_ITEMS'),
   setItemList: createAction('SET_INVENTORY_ITEM_LIST'),
+  setOwnInventoryId: createAction('SET_OWN_INVENTORY_ID'),
 };
 
 export function fetchOwnInventoryItems() {

@@ -1,4 +1,4 @@
-import authActions, { auth } from './authActions';
+import authActions from './authActions';
 import { handleActions } from 'redux-actions';
 
 const defaultState = {

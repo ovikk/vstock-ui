@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import theme from 'theme';
 
@@ -7,8 +8,13 @@ import EditIcon from '@material-ui/icons/Edit';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 
+import Api from 'Api';
+import { fetchOwnInventoryItems } from './inventoryActions';
+
 const Sneaker = ({ item, onEditClick }) => {
   const { sneaker } = item;
+
+  const dispatch = useDispatch();
 
   const renderCurrency = (currency) => {
     if (currency === 'USD') return '$';
@@ -17,6 +23,16 @@ const Sneaker = ({ item, onEditClick }) => {
 
   const onEditIconClick = () => {
     onEditClick(item);
+  };
+
+  const onDeleteIconClick = async () => {
+    const response = await Api.deleteItem(item.id);
+
+    console.log('DELETE', response);
+
+    if (!response.error) {
+      dispatch(fetchOwnInventoryItems());
+    }
   };
 
   return (
@@ -34,7 +50,7 @@ const Sneaker = ({ item, onEditClick }) => {
             <ItemLink>Подробнее</ItemLink>
             <ItemConstWrapper>
               <ItemCost>
-                {item.sell_price}
+                {item.buy_price}
                 {renderCurrency(item.currency)}
               </ItemCost>
             </ItemConstWrapper>
@@ -66,7 +82,7 @@ const Sneaker = ({ item, onEditClick }) => {
 
         <ItemControls>
           <Tooltip title="Удалить">
-            <IconButton>
+            <IconButton onClick={onDeleteIconClick}>
               <CloseIcon style={ItemControlImageStyle} />
             </IconButton>
           </Tooltip>
