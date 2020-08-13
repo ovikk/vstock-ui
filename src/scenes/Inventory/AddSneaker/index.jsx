@@ -32,7 +32,6 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
   const { ownInventoryId } = useSelector((state) => state.inventory);
   const dispatch = useDispatch();
 
-
   const renderMainInput = (gridArea, title, dataKey, isNumber = false) => {
     return (
       <MainInfoInputWrapper gridArea={gridArea}>
@@ -83,6 +82,7 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
       style_id,
       image_url,
       buy_price: retail_price,
+      currency: currencies[1],
       name: itemName,
     }));
   };
