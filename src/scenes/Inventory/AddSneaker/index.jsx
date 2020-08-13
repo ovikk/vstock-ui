@@ -10,9 +10,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import AutoComplete from 'scenes/Inventory/AddSneaker/AutoComplete';
 import Api from 'Api';
 import { fetchOwnInventoryItems } from '../inventoryActions';
-
-const currencies = ['RUB', 'USD'];
-const isItemPublicSelections = ['Виден всем', 'Виден только себе'];
+import { currencies, isItemPublicSelections, sizes } from 'Util.js';
 
 const initSneakerData = {
   image_url: '',
@@ -150,7 +148,7 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
             {renderMainInput('d', 'Цена продажи', 'sell_price', true)}
             {renderMainSelect('e', 'Валюта', 'currency', currencies)}
             {renderMainInput('f', 'Бренд', 'brand')}
-            {renderMainInput('g', 'Размер', 'size')}
+            {renderMainSelect('g', 'Размер', 'size', sizes)}
             {renderMainSelect(
               'h',
               'Приватность',
@@ -160,7 +158,7 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
           </MainInfoInputsWrapper>
         </MainInfoWrapper>
         <AddButton
-          disabled={!sneakerData.style_id || itemName.length < 2}
+          disabled={!sneakerData.style_id || itemName.length < 2 || !sizes.includes(sneakerData.size)}
           onClick={onAddItemClick}
         >
           {isEdit ? 'Редактировать' : 'Добавить'}

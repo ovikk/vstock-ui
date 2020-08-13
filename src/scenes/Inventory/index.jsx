@@ -4,13 +4,13 @@ import styled from 'styled-components';
 import SearchIcon from '@material-ui/icons/Search';
 import AddIcon from '@material-ui/icons/Add';
 import theme from 'theme';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Dialog from '@material-ui/core/Dialog';
 
 import Sneaker from './Sneaker';
 import AddSneakerModal from './AddSneaker';
 
 import { fetchOwnInventoryItems } from './inventoryActions';
+
+import { currencies, isItemPublicSelections } from 'Util.js';
 
 const Inventory = () => {
   const [stockState, setStockState] = useState(0);
@@ -24,7 +24,17 @@ const Inventory = () => {
   const { items, isFetchingItems } = useSelector((state) => state.inventory);
 
   const onEditClick = (item) => {
-    const { sneaker, id, currency, size, sell_price, buy_price, brand, name } = item;
+    const {
+      sneaker,
+      id,
+      currency,
+      size,
+      sell_price,
+      buy_price,
+      brand,
+      name,
+      is_item_public,
+    } = item;
 
     const editSneakerData = {
       id,
@@ -36,8 +46,13 @@ const Inventory = () => {
       buy_price: buy_price || '',
       sell_price: sell_price || '',
       size: size || '',
-      currency: currency || 'RUB',
-      is_item_public: 'Виден всем',
+      currency: currency || currencies[0],
+      is_item_public:
+        is_item_public !== undefined && is_item_public !== null
+          ? is_item_public
+            ? isItemPublicSelections[0]
+            : isItemPublicSelections[1]
+          : isItemPublicSelections[0],
     };
 
     setEditSneakerData(editSneakerData);
