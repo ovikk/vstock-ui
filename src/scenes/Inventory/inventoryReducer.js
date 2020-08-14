@@ -4,7 +4,7 @@ import { handleActions } from 'redux-actions';
 
 const defaultState = {
   items: undefined,
-  isFetchingItems: false,
+  isFetchingItems: true,
   ownInventoryId: 0,
 };
 

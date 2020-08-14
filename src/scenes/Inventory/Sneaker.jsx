@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import theme from 'theme';
@@ -14,6 +14,8 @@ import { fetchOwnInventoryItems } from './inventoryActions';
 const Sneaker = ({ item, onEditClick }) => {
   const { sneaker } = item;
 
+  const [isDeleteClicked, setIsDeleteClicked] = useState(false);
+
   const dispatch = useDispatch();
 
   const renderCurrency = (currency) => {
@@ -25,18 +27,22 @@ const Sneaker = ({ item, onEditClick }) => {
     onEditClick(item);
   };
 
-  const onDeleteIconClick = async () => {
-    const response = await Api.deleteItem(item.id);
+  const onDeleteIconClick = () => {
+    setIsDeleteClicked(true);
 
-    console.log('DELETE', response);
+    setTimeout(async () => {
+      const response = await Api.deleteItem(item.id);
 
-    if (!response.error) {
-      dispatch(fetchOwnInventoryItems());
-    }
+      console.log('DELETE', response);
+
+      if (!response.error) {
+        dispatch(fetchOwnInventoryItems());
+      }
+    }, 600);
   };
 
   return (
-    <ItemWrapper>
+    <ItemWrapper isDeleteClicked={isDeleteClicked}>
       <ItemTopWrapper>
         <ItemImage
           src={
@@ -109,6 +115,10 @@ const ItemWrapper = styled.div`
   flex-direction: column;
   box-sizing: border-box;
   padding: 10px 10px 10px 20px;
+
+  margin-left: ${({ isDeleteClicked }) => (isDeleteClicked ? '100%' : '0px')};
+
+  transition: margin-left 600ms ease-in-out;
 `;
 
 const ItemTopWrapper = styled.div`

@@ -1,12 +1,17 @@
 /* eslint-disable react/display-name */
 import React from 'react';
 
-
 import App from 'scenes/App';
 import Login, { loginStates } from 'scenes/Login';
 import Home from 'scenes/Home';
 
 const appRoutes = [
+  {
+    name: 'App',
+    path: '/app',
+    isPrivate: true,
+    component: App,
+  },
   {
     name: 'Home',
     path: '/home',
@@ -25,14 +30,6 @@ const appRoutes = [
     isPrivate: false,
     component: () => <Login loginPropState={loginStates.registration} />,
   },
-  {
-    name: 'App',
-    path: '/app',
-    isPrivate: true,
-    component: App,
-  },
 ];
-
-
 
 export default appRoutes;

@@ -73,7 +73,7 @@ const Inventory = () => {
     items.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     return items.map((item, index) => (
-      <Sneaker key={index} item={item} onEditClick={onEditClick} />
+      <Sneaker key={item.id} item={item} onEditClick={onEditClick} />
     ));
   };
 

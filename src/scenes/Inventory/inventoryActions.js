@@ -9,7 +9,6 @@ const actions = {
 
 export function fetchOwnInventoryItems() {
     return async (dispatch) => {
-        dispatch(actions.setIsFetching(true))
         const response = await Api.getOwnInventory()
 
         if (!response.error) {
