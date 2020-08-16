@@ -18,6 +18,8 @@ import stockXIcon from 'assets/stockX_icon.svg';
 import goatIcon from 'assets/goat_icon.svg';
 import outOfStockIcon from 'assets/outOfStock_icon.svg';
 
+import { currencySymbols } from 'Util.js';
+
 const Sneaker = ({ item, onEditClick }) => {
   const { sneaker } = item;
 
@@ -70,12 +72,26 @@ const Sneaker = ({ item, onEditClick }) => {
     if (prices[marketKey]) {
       return (
         <ItemMarketPriceText>
-          {prices[marketKey].ask || 'N/A'} / {prices[marketKey].bid || 'N/A'}
+          {prices[marketKey].ask
+            ? `${prices[marketKey].ask} ${
+                currencySymbols[prices[marketKey].currency]
+              }`
+            : 'N/A'}
+          &nbsp;&nbsp;&nbsp; / &nbsp;&nbsp;&nbsp;
+          {prices[marketKey].bid
+            ? `${prices[marketKey].bid} ${
+                currencySymbols[prices[marketKey].currency]
+              }`
+            : 'N/A'}
         </ItemMarketPriceText>
       );
     }
 
-    return <ItemMarketPriceText>N/A / N/A</ItemMarketPriceText>;
+    return (
+      <ItemMarketPriceText>
+        N/A&nbsp;&nbsp;&nbsp; / &nbsp;&nbsp;&nbsp;N/A
+      </ItemMarketPriceText>
+    );
   };
 
   return (

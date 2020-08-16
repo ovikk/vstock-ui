@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 
 export const currencies = ['RUB', 'USD'];
+export const currencySymbols = {
+  RUB: '₽',
+  USD: '$',
+};
 export const isItemPublicSelections = ['Виден всем', 'Виден только себе'];
 export const sizes = [
   'US 3',
