@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import theme from 'theme';
@@ -17,6 +17,183 @@ import { fetchOwnInventoryItems } from './inventoryActions';
 import stockXIcon from 'assets/stockX_icon.svg';
 import goatIcon from 'assets/goat_icon.svg';
 import outOfStockIcon from 'assets/outOfStock_icon.svg';
+
+const Sneaker = ({ item, onEditClick }) => {
+  const { sneaker } = item;
+
+  const [isDeleteClicked, setIsDeleteClicked] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const [prices, setPrices] = useState(undefined);
+
+  useEffect(() => {
+    const handleRequest = async () => {
+      const response = await Api.getItemPrice(item.id);
+      if (!response.error) {
+        setPrices(response.data);
+      } else {
+        setPrices({});
+      }
+    };
+
+    if (isExpanded || prices === undefined) {
+      handleRequest();
+    }
+  }, [isExpanded]);
+
+  const dispatch = useDispatch();
+
+  const renderCurrency = (currency) => {
+    if (currency === 'USD') return '$';
+    return '₽';
+  };
+
+  const onEditIconClick = () => {
+    onEditClick(item);
+  };
+
+  const onDeleteIconClick = () => {
+    setIsDeleteClicked(true);
+    setTimeout(async () => {
+      const response = await Api.deleteItem(item.id);
+      if (!response.error) {
+        dispatch(fetchOwnInventoryItems());
+      }
+    }, 600);
+  };
+
+  const renderMarketPrice = (marketKey) => {
+    if (prices === undefined) {
+      return <Spinner size={20} />;
+    }
+
+    if (prices[marketKey]) {
+      return (
+        <ItemMarketPriceText>
+          {prices[marketKey].ask || 'N/A'} / {prices[marketKey].bid || 'N/A'}
+        </ItemMarketPriceText>
+      );
+    }
+
+    return <ItemMarketPriceText>N/A / N/A</ItemMarketPriceText>;
+  };
+
+  return (
+    <ItemWrapper isDeleteClicked={isDeleteClicked}>
+      <ItemTopWrapper>
+        <ItemImage
+          src={
+            sneaker.image_url ||
+            'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'
+          }
+        />
+        <ItemMainInfoWrapper>
+          <ItemMainInfoTop>
+            <ItemName>{item.name}</ItemName>
+            <ItemLink>Подробнее</ItemLink>
+            <ItemConstWrapper>
+              <ItemCost>
+                {item.buy_price}
+                {renderCurrency(item.currency)}
+              </ItemCost>
+            </ItemConstWrapper>
+          </ItemMainInfoTop>
+          <ItemMainInfoBottom>
+            <ItemMainInfoBottomSection>
+              <ItemMainInfoBottomTitle>Размер</ItemMainInfoBottomTitle>
+              <ItemMainInfoBottomText>{item.size}</ItemMainInfoBottomText>
+            </ItemMainInfoBottomSection>
+
+            <ItemMainInfoBottomSection>
+              <ItemMainInfoBottomTitle>Источник</ItemMainInfoBottomTitle>
+              <ItemMainInfoBottomText>
+                {sneaker.buy_source || '-'}
+              </ItemMainInfoBottomText>
+            </ItemMainInfoBottomSection>
+
+            <ItemMainInfoBottomSection>
+              <ItemMainInfoBottomTitle>Цвет</ItemMainInfoBottomTitle>
+              <ItemMainInfoBottomText>
+                {sneaker.colorway}
+              </ItemMainInfoBottomText>
+            </ItemMainInfoBottomSection>
+          </ItemMainInfoBottom>
+        </ItemMainInfoWrapper>
+
+        <ItemButtonsWrapper>
+          <ItemButton>Продано</ItemButton>
+          <ItemButton>Разместить</ItemButton>
+        </ItemButtonsWrapper>
+
+        <ItemControls>
+          <Tooltip title="Удалить">
+            <IconButton onClick={onDeleteIconClick}>
+              <CloseIcon style={ItemControlImageStyle} />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Редактировать">
+            <IconButton onClick={onEditIconClick}>
+              <EditIcon style={ItemControlImageStyle} />
+            </IconButton>
+          </Tooltip>
+        </ItemControls>
+      </ItemTopWrapper>
+
+      <ItemBottomWrapper>
+        <ItemBottomDivider>
+          {isExpanded && <Divider />}
+          <IconButton
+            onClick={() => setIsExpanded((d) => !d)}
+            style={{ padding: 0 }}
+          >
+            {isExpanded ? (
+              <ArrowUp style={DividerIconStyle} />
+            ) : (
+              <ArrowDown style={DividerIconStyle} />
+            )}
+          </IconButton>
+          {isExpanded && <Divider />}
+        </ItemBottomDivider>
+
+        {isExpanded && (
+          <ItemBottomInfoWrapper>
+            <ItemBottomInfoSection>
+              <ItemMainInfoBottomTitle>Артикул</ItemMainInfoBottomTitle>
+              <ItemMainInfoBottomText>
+                {sneaker.style_id}
+              </ItemMainInfoBottomText>
+            </ItemBottomInfoSection>
+
+            <ItemBottomInfoSection>
+              <ItemBottomMarketIcon src={stockXIcon} />
+              {renderMarketPrice('stockx')}
+            </ItemBottomInfoSection>
+
+            <ItemBottomInfoSection>
+              <ItemBottomMarketIcon src={outOfStockIcon} />
+              {renderMarketPrice('oos')}
+            </ItemBottomInfoSection>
+
+            <ItemBottomInfoSection>
+              <ItemMainInfoBottomTitle>Дата Выхода</ItemMainInfoBottomTitle>
+              <ItemMainInfoBottomText>
+                {sneaker.release_date}
+              </ItemMainInfoBottomText>
+            </ItemBottomInfoSection>
+
+            <ItemBottomInfoSection>
+              <ItemBottomMarketIcon src={goatIcon} />
+              {renderMarketPrice('goat')}
+            </ItemBottomInfoSection>
+          </ItemBottomInfoWrapper>
+        )}
+      </ItemBottomWrapper>
+    </ItemWrapper>
+  );
+};
+
+export default Sneaker;
 
 const ItemWrapper = styled.div`
   width: 100%;
@@ -193,7 +370,7 @@ const ItemBottomInfoWrapper = styled.div`
 
 const ItemBottomInfoSection = styled.div`
   margin: 5px 0px;
-  height: 25px;
+  height: 25 px;
   display: flex;
   align-items: center;
 `;
@@ -205,8 +382,9 @@ const ItemBottomMarketIcon = styled.img`
   margin-right: 50px;
 `;
 
-const SpinnerWrapper = styled.div`
-  height: 50%;
+const ItemMarketPriceText = styled.span`
+  color: ${({ theme }) => theme.colors.approveColor};
+  font-size: 14px;
 `;
 
 const Spinner = styled(CircularProgress)`
@@ -214,152 +392,3 @@ const Spinner = styled(CircularProgress)`
     color: ${({ theme }) => theme.colors.approveColor};
   }
 `;
-
-const Sneaker = ({ item, onEditClick }) => {
-  const { sneaker } = item;
-
-  const [isDeleteClicked, setIsDeleteClicked] = useState(false);
-
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const dispatch = useDispatch();
-
-  const renderCurrency = (currency) => {
-    if (currency === 'USD') return '$';
-    return '₽';
-  };
-
-  const onEditIconClick = () => {
-    onEditClick(item);
-  };
-
-  const onDeleteIconClick = () => {
-    setIsDeleteClicked(true);
-
-    setTimeout(async () => {
-      const response = await Api.deleteItem(item.id);
-
-      console.log('DELETE', response);
-
-      if (!response.error) {
-        dispatch(fetchOwnInventoryItems());
-      }
-    }, 600);
-  };
-
-  console.log(item);
-
-  return (
-    <ItemWrapper isDeleteClicked={isDeleteClicked}>
-      <ItemTopWrapper>
-        <ItemImage
-          src={
-            sneaker.image_url ||
-            'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'
-          }
-        />
-        <ItemMainInfoWrapper>
-          <ItemMainInfoTop>
-            <ItemName>{item.name}</ItemName>
-            <ItemLink>Подробнее</ItemLink>
-            <ItemConstWrapper>
-              <ItemCost>
-                {item.buy_price}
-                {renderCurrency(item.currency)}
-              </ItemCost>
-            </ItemConstWrapper>
-          </ItemMainInfoTop>
-          <ItemMainInfoBottom>
-            <ItemMainInfoBottomSection>
-              <ItemMainInfoBottomTitle>Размер</ItemMainInfoBottomTitle>
-              <ItemMainInfoBottomText>{item.size}</ItemMainInfoBottomText>
-            </ItemMainInfoBottomSection>
-
-            <ItemMainInfoBottomSection>
-              <ItemMainInfoBottomTitle>Источник</ItemMainInfoBottomTitle>
-              <ItemMainInfoBottomText>{sneaker.brand}</ItemMainInfoBottomText>
-            </ItemMainInfoBottomSection>
-
-            <ItemMainInfoBottomSection>
-              <ItemMainInfoBottomTitle>Цвет</ItemMainInfoBottomTitle>
-              <ItemMainInfoBottomText>
-                {sneaker.colorway}
-              </ItemMainInfoBottomText>
-            </ItemMainInfoBottomSection>
-          </ItemMainInfoBottom>
-        </ItemMainInfoWrapper>
-
-        <ItemButtonsWrapper>
-          <ItemButton>Продано</ItemButton>
-          <ItemButton>Разместить</ItemButton>
-        </ItemButtonsWrapper>
-
-        <ItemControls>
-          <Tooltip title="Удалить">
-            <IconButton onClick={onDeleteIconClick}>
-              <CloseIcon style={ItemControlImageStyle} />
-            </IconButton>
-          </Tooltip>
-
-          <Tooltip title="Редактировать">
-            <IconButton onClick={onEditIconClick}>
-              <EditIcon style={ItemControlImageStyle} />
-            </IconButton>
-          </Tooltip>
-        </ItemControls>
-      </ItemTopWrapper>
-
-      <ItemBottomWrapper>
-        <ItemBottomDivider>
-          {isExpanded && <Divider />}
-          <IconButton
-            onClick={() => setIsExpanded((d) => !d)}
-            style={{ padding: 0 }}
-          >
-            {isExpanded ? (
-              <ArrowUp style={DividerIconStyle} />
-            ) : (
-              <ArrowDown style={DividerIconStyle} />
-            )}
-          </IconButton>
-          {isExpanded && <Divider />}
-        </ItemBottomDivider>
-
-        {isExpanded && (
-          <ItemBottomInfoWrapper>
-            <ItemBottomInfoSection>
-              <ItemMainInfoBottomTitle>Артикул</ItemMainInfoBottomTitle>
-              <ItemMainInfoBottomText>
-                {sneaker.style_id}
-              </ItemMainInfoBottomText>
-            </ItemBottomInfoSection>
-
-            <ItemBottomInfoSection>
-              <ItemBottomMarketIcon src={stockXIcon} />
-              <Spinner size={20} />
-            </ItemBottomInfoSection>
-
-            <ItemBottomInfoSection>
-              <ItemBottomMarketIcon src={outOfStockIcon} />
-              <Spinner size={20} />
-            </ItemBottomInfoSection>
-
-            <ItemBottomInfoSection>
-              <ItemMainInfoBottomTitle>Дата Выхода</ItemMainInfoBottomTitle>
-              <ItemMainInfoBottomText>
-                {sneaker.release_date}
-              </ItemMainInfoBottomText>
-            </ItemBottomInfoSection>
-
-            <ItemBottomInfoSection>
-              <ItemBottomMarketIcon src={goatIcon} />
-              <Spinner size={20} />
-            </ItemBottomInfoSection>
-          </ItemBottomInfoWrapper>
-        )}
-      </ItemBottomWrapper>
-    </ItemWrapper>
-  );
-};
-
-export default Sneaker;
