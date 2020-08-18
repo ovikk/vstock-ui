@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import SearchIcon from '@material-ui/icons/Search';
 import AddIcon from '@material-ui/icons/Add';
 import theme from 'theme';
+import Switcher from 'components/Switcher';
 
 import Sneaker from './Sneaker';
 import AddSneakerModal from './AddSneaker';
@@ -96,21 +97,11 @@ const Inventory = () => {
         />
       )}
 
-      <StockSwithcerWrapper>
-        <StockSwitcherTab
-          isSelected={stockState === 0}
-          onClick={() => setStockState(0)}
-        >
-          Мой инветнарь
-        </StockSwitcherTab>
-        <StockSwitcherTab
-          style={{ justifyContent: 'flex-end' }}
-          isSelected={stockState === 1}
-          onClick={() => setStockState(1)}
-        >
-          Дилерский инветнарь
-        </StockSwitcherTab>
-      </StockSwithcerWrapper>
+      <Switcher
+        currentState={stockState}
+        setState={setStockState}
+        statesArray={['Мой инветнарь', 'Дилерский инветнарь']}
+      />
 
       <TopBarWrapper>
         <SearchWrapper>
@@ -147,34 +138,7 @@ const MainWrapper = styled.div`
   overflow-x: hidden;
   overflow-y: hidden;
 `;
-const StockSwithcerWrapper = styled.div`
-  height: 50px;
-  display: flex;
-  margin-left: 30px;
-`;
-const StockSwitcherTab = styled.div`
-  width: 250px;
-  display: flex;
-  align-items: center;
-  font-size: 22px;
-  border-bottom-style: solid;
-  border-bottom-width: 3px;
-  padding: 0px 5px;
 
-  border-bottom-color: ${(props) =>
-    props.isSelected
-      ? props.theme.colors.mainColor
-      : props.theme.colors.secondaryColor};
-
-  color: ${(props) =>
-    props.isSelected
-      ? props.theme.colors.textColor
-      : props.theme.colors.secondaryColor};
-
-  transition: 200ms cubic-bezier(0, 0, 0.2, 1) 100ms;
-
-  cursor: pointer;
-`;
 const TopBarWrapper = styled.div`
   width: 100%;
   height: 50px;
