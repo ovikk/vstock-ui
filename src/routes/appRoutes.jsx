@@ -4,9 +4,11 @@ import ShowChartOutlinedIcon from '@material-ui/icons/ShowChartOutlined';
 import StorageOutlinedIcon from '@material-ui/icons/StorageOutlined';
 import AttachMoneyOutlinedIcon from '@material-ui/icons/AttachMoneyOutlined';
 import RoomOutlinedIcon from '@material-ui/icons/RoomOutlined';
+import GroupIcon from '@material-ui/icons/Group';
 
 import Inventory from 'scenes/Inventory';
-import Stats from 'scenes/Stats'
+import Dealers from 'scenes/Dealers'
+import Stats from 'scenes/Stats';
 
 const appRoutes = [
   {
@@ -29,17 +31,18 @@ const appRoutes = [
     component: Inventory,
   },
   {
+    name: 'Дилеры',
+    icon: GroupIcon,
+    path: '/app/dealers',
+    component: Dealers,
+  },
+  {
     name: 'Подписки',
     icon: AttachMoneyOutlinedIcon,
     path: '/app/subscriptions',
     component: () => <div>Kek4</div>,
   },
-  {
-    name: 'Трекер',
-    icon: RoomOutlinedIcon,
-    path: '/app/tracker',
-    component: () => <div>Kek5</div>,
-  },
+
   {
     name: 'Продажи',
     icon: RoomOutlinedIcon,

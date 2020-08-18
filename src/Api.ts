@@ -9,7 +9,7 @@ const getOwnInventoryUrl = `${env.server}/api/v1/inventory`;
 const getSneakersSuggestionsUrl = `${env.server}/api/v1/item/suggests`;
 const itemUrl = `${env.server}/api/v1/item`;
 const getMarketPricesUrl = `${env.server}/api/v1/item/price`;
-
+const getOwnDealersUrl = `${env.server}/api/v1/user/dealers`;
 
 const apiFetch = async (url: string, opts: any) => {
   try {
@@ -94,6 +94,10 @@ const getItemPrice = (itemId: number) => {
   return get(`${getMarketPricesUrl}/${itemId}`);
 };
 
+const getOwnDealers = () => {
+  return get(getOwnDealersUrl);
+};
+
 const api = {
   login,
   registrate,
@@ -105,7 +109,8 @@ const api = {
   addItemToInventory,
   editItem,
   deleteItem,
-  getItemPrice
+  getItemPrice,
+  getOwnDealers,
 };
 
 export default api;
