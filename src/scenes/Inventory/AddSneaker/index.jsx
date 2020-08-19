@@ -115,7 +115,14 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
   };
 
   return (
-    <Dialog onClose={onClose} open={showModal} maxWidth="lg">
+    <Dialog
+      onClose={onClose}
+      open={showModal}
+      maxWidth="lg"
+      PaperProps={{
+        style: { borderRadius: 25 },
+      }}
+    >
       <MainWrapper>
         <TopTitleWrapper>
           <TitleText>Добавить Предмет</TitleText>
@@ -183,7 +190,7 @@ const MainWrapper = styled.div`
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  padding: 10px 20px;
+  padding: 20px 30px 0px 30px;
 `;
 
 const MainInfoWrapper = styled.div`
@@ -295,7 +302,11 @@ const CloseIcon = styled(CloseIconInit)`
 const AddButton = styled(Button)`
   && {
     margin-top: auto;
-    width: 100%;
+    width: calc(100% + 60px);
+    margin-left: -30px;
+    height: 60px; 
+    font-size: 16px;
+
     background-color: ${({ theme }) => theme.colors.approveColor};
 
     :hover {

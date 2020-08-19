@@ -10,14 +10,14 @@ import { logout } from 'scenes/Login/authActions';
 export default function LeftMenu() {
   const loc = useLocation();
 
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const dispatch = useDispatch();
 
   return (
     <Wrapper
-      onMouseEnter={() => setIsExpanded(true)}
-      onMouseLeave={() => setIsExpanded(false)}
+      // onMouseEnter={() => setIsExpanded(true)}
+      // onMouseLeave={() => setIsExpanded(false)}
       isExpanded={isExpanded}
     >
       {appRoutes.map((route, i) => (
@@ -47,19 +47,18 @@ export default function LeftMenu() {
 const Wrapper = styled.div`
   background-color: ${(props) => props.theme.colors.lightBackground};
   height: 100%;
-  min-width: ${(props) => (props.isExpanded ? '300px' : '50px')};
+  min-width: ${(props) => (props.isExpanded ? '250px' : '50px')};
   border-radius: 0px 15px 15px 0px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   padding-top: 90px;
-  padding-left: 10px;
-`;
+  `;
 
 const Link = styled(RouterLink)`
   && {
     width: 100%;
-    height: 70px;
+    height: 60px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -81,8 +80,8 @@ const Link = styled(RouterLink)`
 
 const LinkText = styled.span`
   font-family: ${({ theme }) => theme.font};
-  font-size: 20px;
+  font-size: 16px;
 `;
 
-const iconStyle = { height: '60%', width: 'auto' };
+const iconStyle = { height: '40%', width: 'auto' };
 const logoutStyle = { marginTop: 'auto', marginBottom: '30px' };

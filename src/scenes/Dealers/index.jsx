@@ -37,5 +37,4 @@ const MainWrapper = styled.div`
   flex-direction: column;
   overflow-x: hidden;
   overflow-y: hidden;
-  color: yellow;
 `;

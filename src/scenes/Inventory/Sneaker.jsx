@@ -214,7 +214,7 @@ export default Sneaker;
 const ItemWrapper = styled.div`
   width: 100%;
   background-color: ${({ theme }) => theme.colors.lightBackground};
-  border-radius: 10px;
+  border-radius: 25px;
   margin-bottom: 25px;
   display: flex;
   flex-direction: column;
@@ -354,7 +354,7 @@ const ItemControlImageStyle = {
 const ItemBottomWrapper = styled.div`
   width: 100%;
   box-sizing: border-box;
-  padding: 0px 50px;
+  padding: 0px 150px;
 `;
 
 const ItemBottomDivider = styled.div`

@@ -107,7 +107,6 @@ const Inventory = () => {
       </TopBarWrapper>
 
       <ListWithShadows>{renderItemList()}</ListWithShadows>
-
     </MainWrapper>
   );
 };

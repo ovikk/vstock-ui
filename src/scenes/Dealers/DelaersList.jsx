@@ -1,16 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import SearchInput from 'components/SearchInput';
 import ListWithShadows from 'components/ListWithShadows';
+import Input from 'components/Input';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/HighlightOff';
+import Button from '@material-ui/core/Button';
 import theme from 'theme.ts';
 
 import { fetchOwnDealers } from './dealersActions';
 
 const DealersList = () => {
   const { dealersList } = useSelector((state) => state.dealers);
+  const [dealerNameInputValue, setDealerNameInputValue] = useState('');
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -29,6 +32,7 @@ const DealersList = () => {
     if (dealersList === []) {
       return <div>Список пуст</div>;
     }
+
 
     return dealersList.map((dealer, i) => (
       <>
@@ -54,7 +58,19 @@ const DealersList = () => {
           <ListWithShadows>{renderDealersList()}</ListWithShadows>
         </DealersWrapper>
       </ListWrapper>
-      <AddDelaerWrapper>Add</AddDelaerWrapper>
+      <AddDelaerWrapper>
+        <Input
+          inputValue={dealerNameInputValue}
+          setInputValue={setDealerNameInputValue}
+        />
+
+        <AddButton
+          variant="contained"
+          isDisabled={dealerNameInputValue.length < 3}
+        >
+          Добавить
+        </AddButton>
+      </AddDelaerWrapper>
     </MainWrapper>
   );
 };
@@ -69,12 +85,13 @@ const MainWrapper = styled.div`
 `;
 
 const ListWrapper = styled.div`
-  width: 45%;
+  width: 40%;
   margin-right: 10px;
+  margin-left: 20px;
 `;
 
 const DealersWrapper = styled.div`
-  height: 400px;
+  height: 500px;
   width: 100%;
 `;
 
@@ -111,11 +128,27 @@ const Divider = styled.div`
   height: 1px;
   margin: 10px 0px;
   padding: 0px 10px;
-  border-bottom: ${({ theme }) => `2px solid ${theme.colors.secondaryColor}`};
+  border-bottom: ${({ theme }) =>
+    `2px solid ${theme.colors.nonFocusedTextColor}`};
 `;
 
 const AddDelaerWrapper = styled.div`
-  width: 45%;
-  margin-left: 10px;
-  background-color: pink;
+  width: 30%;
+  margin-left: 80px;
+`;
+
+const AddButton = styled(Button)`
+  && {
+    background-color: ${({ theme, isDisabled }) =>
+      isDisabled
+        ? theme.colors.nonFocusedTextColor
+        : theme.colors.approveColor} !important;
+    color: #fff;
+    width: 100%;
+    height: 60px;
+    font-size: 20px;
+    margin-top: 30px;
+    margin-bottom: 100px;
+    transition: background-color 100ms;
+  }
 `;

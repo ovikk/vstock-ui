@@ -7,7 +7,14 @@ const SearchInput = ({ width, placeholder }) => {
   const [isFocused, setIsFocused] = useState(false);
   return (
     <SearchWrapper style={{ width: width || 520 }} isFocused={isFocused}>
-      <SearchIcon style={SearchIconStyle} />
+      <SearchIcon
+        style={{
+          ...SearchIconStyle,
+          color: isFocused
+            ? theme.colors.mainColor
+            : theme.colors.secondaryColor,
+        }}
+      />
       <Input
         placeholder={placeholder}
         onFocus={() => setIsFocused(true)}
@@ -38,6 +45,7 @@ const SearchIconStyle = {
   marginLeft: 10,
   height: '70%',
   width: 'auto',
+  transition: 'all 350ms',
 };
 const Input = styled.input`
   padding: 0px 10px;
