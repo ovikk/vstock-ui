@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import LeftMenu from 'components/LeftMenu';
+import Snackbar from '@material-ui/core/Snackbar';
 import appRoutes from 'routes/appRoutes.jsx';
 import {
   BrowserRouter as Router,
@@ -8,11 +9,13 @@ import {
   Route,
   Redirect,
 } from 'react-router-dom';
-
 import { useSelector, useDispatch } from 'react-redux';
+import { hideSnackbar } from 'components/Snackbar/snackbarActions';
 
 const App = () => {
+  const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
+  const { showSnackbar, snackbarText } = useSelector((state) => state.snackbar);
 
   if (!isAuthenticated) {
     return (
@@ -43,6 +46,12 @@ const App = () => {
             <Redirect to={{ pathname: appRoutes[0].path }} />
           </Route>
         </Switch>
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          open={showSnackbar}
+          onClose={() => dispatch(hideSnackbar())}
+          message="snackbarText"
+        />
       </Router>
     </AppWrapper>
   );

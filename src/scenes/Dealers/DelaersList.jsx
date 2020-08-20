@@ -7,6 +7,9 @@ import Input from 'components/Input';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/HighlightOff';
 import Button from '@material-ui/core/Button';
+
+import Account from './Account';
+
 import theme from 'theme.ts';
 
 import { fetchOwnDealers } from './dealersActions';
@@ -33,17 +36,9 @@ const DealersList = () => {
       return <div>Список пуст</div>;
     }
 
-
     return dealersList.map((dealer, i) => (
       <>
-        <Dealer>
-          <IconPlaceholder />
-          <DealerName>{dealer.trusted_user_login}</DealerName>
-
-          <IconButton style={{ padding: 0, marginLeft: 'auto' }}>
-            <CloseIcon style={DeleteIconStyle} />
-          </IconButton>
-        </Dealer>
+        <Account login={dealer.trusted_user_login} />
         {i !== dealersList.length - 1 && <Divider />}
       </>
     ));
