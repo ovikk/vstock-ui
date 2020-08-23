@@ -17,6 +17,10 @@ export default handleActions(
       return { ...state, buyersList: action.payload };
     },
 
+    [dealersActions.setDealersInventory]: (state, action) => {
+      return { ...state, dealersItems: action.payload };
+    },
+
   },
   defaultState
 );

@@ -35,7 +35,6 @@ const BuyersList = () => {
     const response = await Api.getInviteLink();
     if (!response.error) {
       setInviteLink(response.data.invite_url);
-      dispatch(showSnackbar(`Ссылка сгенерирована`));
     } else {
       dispatch(showSnackbar(`Ошибка при генерации ссылки`));
     }

@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Switcher from 'components/Switcher';
 
-import DealersList from './DelaersList'
-import BuyersList from './BuyersList'
+import DealersInventory from './DealersInventory';
+import DealersList from './DelaersList';
+import BuyersList from './BuyersList';
 
 const Dealers = () => {
-  const [pageState, setPageState] = useState(2);
+  const [pageState, setPageState] = useState(0);
 
   return (
     <MainWrapper>
@@ -15,13 +16,9 @@ const Dealers = () => {
         setState={setPageState}
         statesArray={['Инвентарь Дилеров', 'Список Дилеров', 'Список Баеров']}
       />
-
-      {pageState === 1 && <DealersList />} 
-      {pageState === 2 && <BuyersList />} 
-
-
-
-
+      {pageState === 0 && <DealersInventory />}
+      {pageState === 1 && <DealersList />}
+      {pageState === 2 && <BuyersList />}
     </MainWrapper>
   );
 };

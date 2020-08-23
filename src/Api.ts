@@ -7,7 +7,7 @@ const authUrl = `${env.server}/api/v1/auth`;
 
 const getInventoryByIdUrl = `${env.server}/api/v1/inventory`;
 const getOwnInventoryUrl = `${env.server}/api/v1/inventory`;
-const getDealersInventoryUrl = `${env.server}/api/v1/inventory/trusted`;
+const getDealersInventoryUrl = `${env.server}/api/v1/inventory/trusted/`;
 
 const getSneakersSuggestionsUrl = `${env.server}/api/v1/item/suggests`;
 const itemUrl = `${env.server}/api/v1/item`;
