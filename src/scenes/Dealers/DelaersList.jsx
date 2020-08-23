@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Api from 'Api.ts';
 import styled from 'styled-components';
 import SearchInput from 'components/SearchInput';
 import ListWithShadows from 'components/ListWithShadows';
+import { showSnackbar } from 'components/Snackbar/snackbarActions';
 import Input from 'components/Input';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/HighlightOff';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
 
 import Account from './Account';
@@ -16,7 +17,10 @@ import { fetchOwnDealers } from './dealersActions';
 
 const DealersList = () => {
   const { dealersList } = useSelector((state) => state.dealers);
+
   const [dealerNameInputValue, setDealerNameInputValue] = useState('');
+  const [isAddDealerFetching, setIsAddDealerFetching] = useState(false);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -26,6 +30,20 @@ const DealersList = () => {
   }, []);
 
   console.log({ dealersList });
+
+  const onAddDelaerClick = async () => {
+    setIsAddDealerFetching(true);
+    const response = await Api.addDealer(dealerNameInputValue);
+    if (!response.error) {
+      setDealerNameInputValue('');
+      dispatch(showSnackbar(`Пользователь ${dealerNameInputValue} добавлен`));
+      dispatch(fetchOwnDealers());
+    } else {
+      dispatch(showSnackbar(`Пользователь приватный или не найден`));
+    }
+    console.log(response);
+    setIsAddDealerFetching(false);
+  };
 
   const renderDealersList = () => {
     if (dealersList === undefined) {
@@ -61,9 +79,10 @@ const DealersList = () => {
 
         <AddButton
           variant="contained"
-          isDisabled={dealerNameInputValue.length < 3}
+          isDisabled={dealerNameInputValue.length < 3 || isAddDealerFetching}
+          onClick={onAddDelaerClick}
         >
-          Добавить
+          {isAddDealerFetching ? <Spinner size={40} /> : 'Добавить'}
         </AddButton>
       </AddDelaerWrapper>
     </MainWrapper>
@@ -89,34 +108,6 @@ const DealersWrapper = styled.div`
   height: 500px;
   width: 100%;
 `;
-
-const Dealer = styled.div`
-  width: 95%;
-  height: 40px;
-  display: flex;
-  align-items: center;
-`;
-
-const IconPlaceholder = styled.div`
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
-
-  background-color: ${({ theme }) => theme.colors.nonFocusedTextColor};
-`;
-
-const DealerName = styled.span`
-  margin-left: 20px;
-  font-size: 20px;
-  font-weight: bold;
-  color: ${({ theme }) => theme.colors.textColor};
-`;
-
-const DeleteIconStyle = {
-  height: '30px',
-  width: 'auto',
-  color: '#FFFFFF',
-};
 
 const Divider = styled.div`
   width: 1;
@@ -145,5 +136,11 @@ const AddButton = styled(Button)`
     margin-top: 30px;
     margin-bottom: 100px;
     transition: background-color 100ms;
+  }
+`;
+
+const Spinner = styled(CircularProgress)`
+  && {
+    color: ${({ theme }) => theme.colors.approveColor};
   }
 `;

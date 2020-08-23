@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Switcher from 'components/Switcher';
 
 import DealersList from './DelaersList'
+import BuyersList from './BuyersList'
 
 const Dealers = () => {
   const [pageState, setPageState] = useState(1);
@@ -16,7 +17,7 @@ const Dealers = () => {
       />
 
       {pageState === 1 && <DealersList />} 
-      
+      {pageState === 2 && <BuyersList />} 
 
 
 

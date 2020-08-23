@@ -39,7 +39,7 @@ const AutoComplete = ({
     const item = suggestions[selectedIndex];
 
     if (item) {
-      setInputValue(`${item.make} ${item.name}`);
+      setInputValue(`${item.name}`);
       setShowSuggeestionsFlag(false);
       returnFunction({ ...item, inputValue });
     }
@@ -119,8 +119,8 @@ const AutoComplete = ({
                 onClick={() => setIsItemSelected(true)}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
-                <SingleSuggestionImage src={item.thumbnail_url} />
-                <SingleSuggestionName>{`${item.make} ${item.name} ${item.colorway} (${item.style_id})`}</SingleSuggestionName>
+                <SingleSuggestionImage src={item.image_url} />
+                <SingleSuggestionName>{`${item.name} (${item.style_id})`}</SingleSuggestionName>
               </SingleSuggestionWrapper>
             ))}
           </AutoCompleteSuggestions>

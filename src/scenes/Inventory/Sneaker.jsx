@@ -13,6 +13,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 import Api from 'Api';
 import { fetchOwnInventoryItems } from './inventoryActions';
+import { showSnackbar } from 'components/Snackbar/snackbarActions';
 
 import stockXIcon from 'assets/stockX_icon.svg';
 import goatIcon from 'assets/goat_icon.svg';
@@ -21,7 +22,7 @@ import outOfStockIcon from 'assets/outOfStock_icon.svg';
 import { currencySymbols } from 'Util.js';
 
 const Sneaker = ({ item, onEditClick }) => {
-  const { sneaker } = item;
+  const { product } = item;
 
   const [isDeleteClicked, setIsDeleteClicked] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -38,7 +39,7 @@ const Sneaker = ({ item, onEditClick }) => {
       }
     };
 
-    if (isExpanded || prices === undefined) {
+    if (isExpanded && prices === undefined) {
       handleRequest();
     }
   }, [isExpanded]);
@@ -61,6 +62,7 @@ const Sneaker = ({ item, onEditClick }) => {
       if (!response.error) {
         dispatch(fetchOwnInventoryItems());
       }
+      dispatch(showSnackbar('Предмет удален'));
     }, 600);
   };
 
@@ -99,7 +101,7 @@ const Sneaker = ({ item, onEditClick }) => {
       <ItemTopWrapper>
         <ItemImage
           src={
-            sneaker.image_url ||
+            product.image_url ||
             'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'
           }
         />
@@ -117,20 +119,20 @@ const Sneaker = ({ item, onEditClick }) => {
           <ItemMainInfoBottom>
             <ItemMainInfoBottomSection>
               <ItemMainInfoBottomTitle>Размер</ItemMainInfoBottomTitle>
-              <ItemMainInfoBottomText>{item.size}</ItemMainInfoBottomText>
+              <ItemMainInfoBottomText>{item.size_title}</ItemMainInfoBottomText>
             </ItemMainInfoBottomSection>
 
             <ItemMainInfoBottomSection>
               <ItemMainInfoBottomTitle>Источник</ItemMainInfoBottomTitle>
               <ItemMainInfoBottomText>
-                {sneaker.buy_source || '-'}
+                {product.buy_source || '-'}
               </ItemMainInfoBottomText>
             </ItemMainInfoBottomSection>
 
             <ItemMainInfoBottomSection>
               <ItemMainInfoBottomTitle>Цвет</ItemMainInfoBottomTitle>
               <ItemMainInfoBottomText>
-                {sneaker.colorway}
+                {product.colorway}
               </ItemMainInfoBottomText>
             </ItemMainInfoBottomSection>
           </ItemMainInfoBottom>
@@ -177,7 +179,7 @@ const Sneaker = ({ item, onEditClick }) => {
             <ItemBottomInfoSection>
               <ItemMainInfoBottomTitle>Артикул</ItemMainInfoBottomTitle>
               <ItemMainInfoBottomText>
-                {sneaker.style_id}
+                {product.style_id}
               </ItemMainInfoBottomText>
             </ItemBottomInfoSection>
 
@@ -194,7 +196,7 @@ const Sneaker = ({ item, onEditClick }) => {
             <ItemBottomInfoSection>
               <ItemMainInfoBottomTitle>Дата Выхода</ItemMainInfoBottomTitle>
               <ItemMainInfoBottomText>
-                {sneaker.release_date}
+                {product.release_date}
               </ItemMainInfoBottomText>
             </ItemBottomInfoSection>
 

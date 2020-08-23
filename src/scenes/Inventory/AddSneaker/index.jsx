@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Dialog from '@material-ui/core/Dialog';
@@ -10,27 +10,53 @@ import MenuItem from '@material-ui/core/MenuItem';
 import AutoComplete from 'scenes/Inventory/AddSneaker/AutoComplete';
 import Api from 'Api';
 import { fetchOwnInventoryItems } from '../inventoryActions';
+import { showSnackbar } from 'components/Snackbar/snackbarActions';
+import Spinner from 'components/Spinner';
 import { currencies, isItemPublicSelections, sizes } from 'Util.js';
 
 const initSneakerData = {
   image_url: '',
   style_id: '',
   colorway: '',
-  brand: '',
+  brand_name: '',
   buy_price: '',
   sell_price: '',
-  size: '',
   currency: currencies[0],
   is_item_public: isItemPublicSelections[0],
 };
 
 const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
+  console.log({ editSneakerData });
   const [sneakerData, setSneakerData] = useState(
     isEdit ? { ...editSneakerData } : { ...initSneakerData }
   );
   const [itemName, setItemName] = useState(isEdit ? editSneakerData.name : '');
+  const [sizeValue, setSizeValue] = useState(
+    isEdit ? editSneakerData.size_id : -1
+  );
+  const [sizeChart, setSizeChart] = useState(undefined);
+  const [sizeChartLoading, setSizeChartLoading] = useState(false);
+
   const { ownInventoryId } = useSelector((state) => state.inventory);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (sneakerData.style_id) {
+      const getCharts = async () => {
+        setSizeChartLoading(true);
+        const request = await Api.getItemSizeChartByStyleId(
+          sneakerData.style_id
+        );
+        if (!request.error) {
+          setSizeChart(request.data ? request.data : []);
+        }
+        setSizeChartLoading(false);
+
+        console.log({ request });
+      };
+      getCharts();
+    }
+  }, [sneakerData.style_id]);
 
   const renderMainInput = (gridArea, title, dataKey, isNumber = false) => {
     return (
@@ -72,12 +98,53 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
     );
   };
 
-  const setSneakerDataFromAutoComplete = (data) => {
-    const { brand, colorway, style_id, image_url, retail_price } = data;
+  const rednerSizeChart = (gridArea) => {
+    console.log({ sizeChart, sizeValue });
+    return (
+      <MainInfoInputWrapper gridArea={gridArea}>
+        <MainInfoInputTitle>Размер</MainInfoInputTitle>
+        {sizeChartLoading ? (
+          <Spinner size={25} />
+        ) : sizeChart === undefined ? (
+          <SizePlaceholder>Введите артикул для сетки размеров</SizePlaceholder>
+        ) : sizeChart.length === 0 ? (
+          <SizePlaceholder>Нет размерной сетки</SizePlaceholder>
+        ) : (
+          <MainSelect
+            style={{ width: '70%' }}
+            value={sizeValue}
+            onChange={(e) => {
+              setSizeValue(e.target.value);
+            }}
+          >
+            <MenuItem value={-1} disabled>
+              Выберите размер
+            </MenuItem>
+
+            {sizeChart.map((d, i) => (
+              <MenuItem value={d.id} key={i}>
+                {d.title}
+              </MenuItem>
+            ))}
+          </MainSelect>
+        )}
+      </MainInfoInputWrapper>
+    );
+  };
+
+  const setSneakerDataFromAutoComplete = async (data) => {
+    const {
+      brand_name,
+      colorway,
+      style_id,
+      image_url,
+      retail_price,
+      chart,
+    } = data;
 
     setSneakerData((data) => ({
       ...data,
-      brand,
+      brand_name,
       colorway,
       style_id,
       image_url,
@@ -97,6 +164,7 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
       sell_price:
         sneakerData.sell_price !== '' ? parseFloat(sneakerData.sell_price) : 0,
       is_item_public: sneakerData.is_item_public === isItemPublicSelections[0],
+      size_id: sizeValue,
     };
 
     let response;
@@ -110,6 +178,7 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
     if (!response.error) {
       dispatch(fetchOwnInventoryItems());
       setSneakerData({ ...initSneakerData });
+      dispatch(showSnackbar(isEdit ? 'Предмет обновлен' : 'Предмет добавлен'));
       onClose();
     }
   };
@@ -156,8 +225,8 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
             {renderMainInput('c', 'Цена покупки', 'buy_price', true)}
             {renderMainInput('d', 'Цена продажи', 'sell_price', true)}
             {renderMainSelect('e', 'Валюта', 'currency', currencies)}
-            {renderMainInput('f', 'Бренд', 'brand')}
-            {renderMainSelect('g', 'Размер', 'size', sizes)}
+            {renderMainInput('f', 'Бренд', 'brand_name')}
+            {rednerSizeChart('g')}
             {renderMainSelect(
               'h',
               'Приватность',
@@ -168,9 +237,7 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
         </MainInfoWrapper>
         <AddButton
           disabled={
-            !sneakerData.style_id ||
-            itemName.length < 2 ||
-            !sizes.includes(sneakerData.size)
+            !sneakerData.style_id || itemName.length < 2 || sizeValue === -1
           }
           onClick={onAddItemClick}
         >
@@ -220,7 +287,7 @@ const MainInfoInputsWrapper = styled.div`
   grid-template:
     'a b b' auto
     'c d e' auto
-    'f g .'
+    'f g g'
     'h h .' auto / 1fr 1fr 1fr;
 `;
 
@@ -293,6 +360,11 @@ const TitleText = styled.span`
   color: ${({ theme }) => theme.colors.nonFocusedTextColor};
 `;
 
+const SizePlaceholder = styled.span`
+  font-size: 16px;
+  color: ${({ theme }) => theme.colors.textColor};
+`;
+
 const CloseIcon = styled(CloseIconInit)`
   && {
     color: ${({ theme }) => theme.colors.nonFocusedTextColor};
@@ -304,7 +376,7 @@ const AddButton = styled(Button)`
     margin-top: auto;
     width: calc(100% + 60px);
     margin-left: -30px;
-    height: 60px; 
+    height: 60px;
     font-size: 16px;
 
     background-color: ${({ theme }) => theme.colors.approveColor};

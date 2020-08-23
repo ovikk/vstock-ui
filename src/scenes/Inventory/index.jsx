@@ -25,28 +25,28 @@ const Inventory = () => {
   const { items, isFetchingItems } = useSelector((state) => state.inventory);
 
   const onEditClick = (item) => {
+    console.log({item})
     const {
-      sneaker,
+      product,
       id,
       currency,
-      size,
       sell_price,
       buy_price,
-      brand,
       name,
       is_item_public,
+      size_id
     } = item;
 
     const editSneakerData = {
       id,
       name: name || '',
-      image_url: sneaker.image_url,
-      style_id: sneaker.style_id,
-      colorway: sneaker.colorway || '',
-      brand: brand || '',
+      image_url: product.image_url,
+      style_id: product.style_id,
+      colorway: product.colorway || '',
+      brand: product.brand_name || '',
+      size_id: size_id || -1,
       buy_price: buy_price || '',
       sell_price: sell_price || '',
-      size: size || '',
       currency: currency || currencies[0],
       is_item_public:
         is_item_public !== undefined && is_item_public !== null

@@ -9,7 +9,10 @@ const getOwnInventoryUrl = `${env.server}/api/v1/inventory`;
 const getSneakersSuggestionsUrl = `${env.server}/api/v1/item/suggests`;
 const itemUrl = `${env.server}/api/v1/item`;
 const getMarketPricesUrl = `${env.server}/api/v1/item/price`;
-const getOwnDealersUrl = `${env.server}/api/v1/user/dealers`;
+const getItemSizeChartUrl = `${env.server}/api/v1/item/sizechart`;
+const getOwnDealersUrl = `${env.server}/api/v1/merchants/dealers`;
+const addDealerUrl = `${env.server}/api/v1/merchants/dealers/add`;
+const getOwnBuyersUrl = `${env.server}/api/v1/merchants/buyers`;
 
 const apiFetch = async (url: string, opts: any) => {
   try {
@@ -98,6 +101,22 @@ const getOwnDealers = () => {
   return get(getOwnDealersUrl);
 };
 
+const addDealer = (dealer: string) => {
+  return get(`${addDealerUrl}/${dealer}`);
+};
+
+const getOwnBuyers = () => {
+  return get(getOwnBuyersUrl);
+};
+
+const getItemSizeChartByStyleId = (styleId: string) => {
+  return get(`${getItemSizeChartUrl}?styleID=${styleId}`);
+};
+
+const getItemSizeChartByChartId = (chartId: number) => {
+  return get(`${getItemSizeChartUrl}?chartID=${chartId}`);
+};
+
 const api = {
   login,
   registrate,
@@ -111,6 +130,10 @@ const api = {
   deleteItem,
   getItemPrice,
   getOwnDealers,
+  addDealer,
+  getOwnBuyers,
+  getItemSizeChartByStyleId,
+  getItemSizeChartByChartId
 };
 
 export default api;

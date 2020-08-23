@@ -50,7 +50,7 @@ const App = () => {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           open={showSnackbar}
           onClose={() => dispatch(hideSnackbar())}
-          message="snackbarText"
+          message={snackbarText}
         />
       </Router>
     </AppWrapper>
