@@ -26,7 +26,6 @@ const initSneakerData = {
 };
 
 const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
-  console.log({ editSneakerData });
   const [sneakerData, setSneakerData] = useState(
     isEdit ? { ...editSneakerData } : { ...initSneakerData }
   );
@@ -52,7 +51,6 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
         }
         setSizeChartLoading(false);
 
-        console.log({ request });
       };
       getCharts();
     }
@@ -99,7 +97,6 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
   };
 
   const rednerSizeChart = (gridArea) => {
-    console.log({ sizeChart, sizeValue });
     return (
       <MainInfoInputWrapper gridArea={gridArea}>
         <MainInfoInputTitle>Размер</MainInfoInputTitle>

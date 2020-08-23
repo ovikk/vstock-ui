@@ -11,7 +11,6 @@ export function fetchOwnDealers() {
     const response = await Api.getOwnDealers();
 
     if (!response.error) {
-      console.log(response);
       dispatch(actions.setOwnDealersList(response.data));
     } else {
       dispatch(actions.setOwnDealersList([]));
@@ -24,7 +23,6 @@ export function fetchOwnBuyers() {
     const response = await Api.getOwnBuyers();
 
     if (!response.error) {
-      console.log(response);
       dispatch(actions.setOwnBuyersList(response.data));
     } else {
       dispatch(actions.setOwnBuyersList([]));

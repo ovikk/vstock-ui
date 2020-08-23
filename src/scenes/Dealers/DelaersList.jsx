@@ -29,7 +29,6 @@ const DealersList = () => {
     }
   }, []);
 
-  console.log({ dealersList });
 
   const onAddDelaerClick = async () => {
     setIsAddDealerFetching(true);
@@ -41,8 +40,18 @@ const DealersList = () => {
     } else {
       dispatch(showSnackbar(`Пользователь приватный или не найден`));
     }
-    console.log(response);
     setIsAddDealerFetching(false);
+  };
+
+  const onDeleteDealerClick = async (dealerId, dealerLogin) => {
+    const response = await Api.deleteDealer(dealerId);
+
+    if (!response.error) {
+      dispatch(showSnackbar(`Дилер ${dealerLogin} удален`));
+      dispatch(fetchOwnDealers());
+    } else {
+      dispatch(showSnackbar(`Ошибка при удалени ${dealerLogin} дилера`));
+    }
   };
 
   const renderDealersList = () => {
@@ -56,7 +65,12 @@ const DealersList = () => {
 
     return dealersList.map((dealer, i) => (
       <>
-        <Account login={dealer.trusted_user_login} />
+        <Account
+          login={dealer.trusted_user_login}
+          onDelete={() =>
+            onDeleteDealerClick(dealer.id, dealer.trusted_user_login)
+          }
+        />
         {i !== dealersList.length - 1 && <Divider />}
       </>
     ));
@@ -73,6 +87,7 @@ const DealersList = () => {
       </ListWrapper>
       <AddDelaerWrapper>
         <Input
+          title="Никнейм дилера"
           inputValue={dealerNameInputValue}
           setInputValue={setDealerNameInputValue}
         />

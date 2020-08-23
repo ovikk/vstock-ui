@@ -25,7 +25,6 @@ const Inventory = () => {
   const { items, isFetchingItems } = useSelector((state) => state.inventory);
 
   const onEditClick = (item) => {
-    console.log({item})
     const {
       product,
       id,

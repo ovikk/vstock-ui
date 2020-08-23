@@ -4,15 +4,20 @@ const loginUrl = `${env.server}/api/v1/login`;
 const registrateUrl = `${env.server}/api/v1/signin`;
 const logoutUrl = `${env.server}/api/v1/logout`;
 const authUrl = `${env.server}/api/v1/auth`;
+
 const getInventoryByIdUrl = `${env.server}/api/v1/inventory`;
 const getOwnInventoryUrl = `${env.server}/api/v1/inventory`;
+const getDealersInventoryUrl = `${env.server}/api/v1/inventory/trusted`;
+
 const getSneakersSuggestionsUrl = `${env.server}/api/v1/item/suggests`;
 const itemUrl = `${env.server}/api/v1/item`;
 const getMarketPricesUrl = `${env.server}/api/v1/item/price`;
 const getItemSizeChartUrl = `${env.server}/api/v1/item/sizechart`;
+
 const getOwnDealersUrl = `${env.server}/api/v1/merchants/dealers`;
 const addDealerUrl = `${env.server}/api/v1/merchants/dealers/add`;
 const getOwnBuyersUrl = `${env.server}/api/v1/merchants/buyers`;
+const getInviteLinkUrl = `${env.server}/api/v1/invite`;
 
 const apiFetch = async (url: string, opts: any) => {
   try {
@@ -93,6 +98,14 @@ const deleteItem = (itemId: number) => {
   return _delete(`${itemUrl}/${itemId}`);
 };
 
+const getItemSizeChartByStyleId = (styleId: string) => {
+  return get(`${getItemSizeChartUrl}?styleID=${styleId}`);
+};
+
+const getItemSizeChartByChartId = (chartId: number) => {
+  return get(`${getItemSizeChartUrl}?chartID=${chartId}`);
+};
+
 const getItemPrice = (itemId: number) => {
   return get(`${getMarketPricesUrl}/${itemId}`);
 };
@@ -105,16 +118,20 @@ const addDealer = (dealer: string) => {
   return get(`${addDealerUrl}/${dealer}`);
 };
 
+const deleteDealer = (dealerId: number) => {
+  return _delete(getOwnDealersUrl + `/${dealerId}`);
+};
+
 const getOwnBuyers = () => {
   return get(getOwnBuyersUrl);
 };
 
-const getItemSizeChartByStyleId = (styleId: string) => {
-  return get(`${getItemSizeChartUrl}?styleID=${styleId}`);
+const getDealersInventory = () => {
+  return get(getDealersInventoryUrl);
 };
 
-const getItemSizeChartByChartId = (chartId: number) => {
-  return get(`${getItemSizeChartUrl}?chartID=${chartId}`);
+const getInviteLink = () => {
+  return get(getInviteLinkUrl);
 };
 
 const api = {
@@ -131,9 +148,12 @@ const api = {
   getItemPrice,
   getOwnDealers,
   addDealer,
+  deleteDealer,
   getOwnBuyers,
   getItemSizeChartByStyleId,
-  getItemSizeChartByChartId
+  getItemSizeChartByChartId,
+  getDealersInventory,
+  getInviteLink,
 };
 
 export default api;

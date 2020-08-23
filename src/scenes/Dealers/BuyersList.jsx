@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Api from 'Api.ts'
+import Api from 'Api.ts';
 import styled from 'styled-components';
 import SearchInput from 'components/SearchInput';
 import ListWithShadows from 'components/ListWithShadows';
 import Input from 'components/Input';
+import Spinner from 'components/Spinner';
+import { showSnackbar } from 'components/Snackbar/snackbarActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
 
@@ -17,6 +19,9 @@ import { fetchOwnBuyers } from './dealersActions';
 const BuyersList = () => {
   const { buyersList } = useSelector((state) => state.dealers);
 
+  const [inviteLink, setInviteLink] = useState('');
+  const [isInviteLinkFetching, setIsInviteLinkFetching] = useState(false);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -25,8 +30,24 @@ const BuyersList = () => {
     }
   }, []);
 
-  console.log({ buyersList });
+  const onGetLinkClick = async () => {
+    setIsInviteLinkFetching(true);
+    const response = await Api.getInviteLink();
+    if (!response.error) {
+      setInviteLink(response.data.invite_url);
+      dispatch(showSnackbar(`Ссылка сгенерирована`));
+    } else {
+      dispatch(showSnackbar(`Ошибка при генерации ссылки`));
+    }
+    setIsInviteLinkFetching(false);
+  };
 
+  const onInviteLinkClick = () => {
+    if (inviteLink !== '' && navigator) {
+      navigator.clipboard.writeText(inviteLink);
+      dispatch(showSnackbar(`Ссылка скопирована`));
+    }
+  };
 
   const renderBuyersList = () => {
     if (buyersList === undefined) {
@@ -39,7 +60,7 @@ const BuyersList = () => {
 
     return buyersList.map((dealer, i) => (
       <>
-        <Account login={dealer.trusted_user_login} />
+        <Account login={dealer.user_login} />
         {i !== buyersList.length - 1 && <Divider />}
       </>
     ));
@@ -54,9 +75,19 @@ const BuyersList = () => {
           <ListWithShadows>{renderBuyersList()}</ListWithShadows>
         </BuyersWrapper>
       </ListWrapper>
-      <AddDelaerWrapper>
-            inviteLink
-      </AddDelaerWrapper>
+      <GetInviteLinkWrapper>
+        <Input
+          inputValue={inviteLink}
+          title="Инвайт ссылка"
+          disabled={true}
+          setInputValue={() => setInviteLink(inviteLink)}
+          onClick={onInviteLinkClick}
+        />
+
+        <GetLinkButton variant="contained" onClick={onGetLinkClick}>
+          {isInviteLinkFetching ? <Spinner size={40} /> : 'Получить ссылку'}
+        </GetLinkButton>
+      </GetInviteLinkWrapper>
     </MainWrapper>
   );
 };
@@ -90,12 +121,12 @@ const Divider = styled.div`
     `2px solid ${theme.colors.nonFocusedTextColor}`};
 `;
 
-const AddDelaerWrapper = styled.div`
+const GetInviteLinkWrapper = styled.div`
   width: 30%;
   margin-left: 80px;
 `;
 
-const AddButton = styled(Button)`
+const GetLinkButton = styled(Button)`
   && {
     background-color: ${({ theme, isDisabled }) =>
       isDisabled
@@ -108,11 +139,5 @@ const AddButton = styled(Button)`
     margin-top: 30px;
     margin-bottom: 100px;
     transition: background-color 100ms;
-  }
-`;
-
-const Spinner = styled(CircularProgress)`
-  && {
-    color: ${({ theme }) => theme.colors.approveColor};
   }
 `;

@@ -4,13 +4,13 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/HighlightOff';
 import { classicNameResolver } from 'typescript';
 
-const Account = ({ login }) => {
+const Account = ({ login, onDelete }) => {
   return (
     <Wrapper>
       <IconPlaceholder />
       <Name>{login}</Name>
 
-      <IconButton style={{ padding: 0, marginLeft: 'auto' }}>
+      <IconButton style={{ padding: 0, marginLeft: 'auto' }} onClick={onDelete}>
         <CloseIcon style={DeleteIconStyle} />
       </IconButton>
     </Wrapper>

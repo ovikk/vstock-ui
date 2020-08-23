@@ -3,7 +3,8 @@ import { handleActions } from 'redux-actions';
 
 const defaultState = {
   dealersList: undefined,
-  buyersList: undefined
+  buyersList: undefined,
+  dealersItems: undefined
 };
 
 export default handleActions(
