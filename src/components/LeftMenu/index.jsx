@@ -6,6 +6,7 @@ import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 
 import { useDispatch } from 'react-redux';
 import { logout } from 'scenes/Login/authActions';
+import mainLogo from 'assets/mainLogo.svg';
 
 export default function LeftMenu() {
   const loc = useLocation();
@@ -20,6 +21,8 @@ export default function LeftMenu() {
       // onMouseLeave={() => setIsExpanded(false)}
       isExpanded={isExpanded}
     >
+      <MainLogo src={mainLogo} />
+
       {appRoutes.map((route, i) => (
         <Link
           isselected={loc.pathname.startsWith(route.path) ? 1 : 0}
@@ -52,8 +55,8 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  padding-top: 90px;
-  `;
+  padding-top: 30px;
+`;
 
 const Link = styled(RouterLink)`
   && {
@@ -81,6 +84,10 @@ const Link = styled(RouterLink)`
 const LinkText = styled.span`
   font-family: ${({ theme }) => theme.font};
   font-size: 16px;
+`;
+
+const MainLogo = styled.img`
+  margin-bottom: 100px;
 `;
 
 const iconStyle = { height: '40%', width: 'auto' };
