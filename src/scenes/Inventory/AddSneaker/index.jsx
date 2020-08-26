@@ -334,10 +334,13 @@ const ImageWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.secondaryColor};
   border-radius: 10px;
   margin-right: 100px;
+
+  display: flex;
+  align-items: center;
 `;
 
 const SneakerImage = styled.img`
-  height: 100%;
+  height: auto;
   width: 100%;
   border-radius: 10px;
 `;
