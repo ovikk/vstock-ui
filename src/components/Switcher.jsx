@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 const Switcher = ({ currentState, setState, statesArray }) => {
   const getJustfify = (index, length) => {
-    if (index === 0) return 'flex-start';
-    if (index === length - 1) return 'flex-end';
+    // if (index === 0) return 'flex-start';
+    // if (index === length - 1) return 'flex-end';
     return 'center';
   };
 

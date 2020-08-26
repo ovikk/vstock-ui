@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Dialog from '@material-ui/core/Dialog';
+import Checkbox from '@material-ui/core/Checkbox';
 import CloseIconInit from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
 import Select from '@material-ui/core/Select';
@@ -9,7 +10,7 @@ import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import AutoComplete from 'scenes/Inventory/AddSneaker/AutoComplete';
 import Api from 'Api';
-import { fetchOwnInventoryItems } from '../inventoryActions';
+import { fetchOwnInventoryItems, fetchOwnSoldInventoryItems } from '../inventoryActions';
 import { showSnackbar } from 'components/Snackbar/snackbarActions';
 import Spinner from 'components/Spinner';
 import { currencies, isItemPublicSelections, sizes } from 'Util.js';
@@ -18,11 +19,12 @@ const initSneakerData = {
   image_url: '',
   style_id: '',
   colorway: '',
-  brand_name: '',
+  brand: '',
   buy_price: '',
   sell_price: '',
   currency: currencies[0],
   is_item_public: isItemPublicSelections[0],
+  status: 0,
 };
 
 const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
@@ -50,7 +52,6 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
           setSizeChart(request.data ? request.data : []);
         }
         setSizeChartLoading(false);
-
       };
       getCharts();
     }
@@ -96,6 +97,24 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
     );
   };
 
+  const renderCheckMark = (gridArea, title, dataKey) => {
+    return (
+      <MainInfoInputWrapper gridArea={gridArea}>
+        <MainInfoInputTitle>{title}</MainInfoInputTitle>
+
+        <Checkbox
+          checked={sneakerData[dataKey]}
+          color="primary"
+          onChange={(e) => {
+            const newData = { ...sneakerData };
+            newData[dataKey] = e.target.checked;
+            setSneakerData(newData);
+          }}
+        />
+      </MainInfoInputWrapper>
+    );
+  };
+
   const rednerSizeChart = (gridArea) => {
     return (
       <MainInfoInputWrapper gridArea={gridArea}>
@@ -130,18 +149,13 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
   };
 
   const setSneakerDataFromAutoComplete = async (data) => {
-    const {
-      brand_name,
-      colorway,
-      style_id,
-      image_url,
-      retail_price,
-      chart,
-    } = data;
+    const { brand, colorway, style_id, image_url, retail_price } = data;
+
+    console.log(data);
 
     setSneakerData((data) => ({
       ...data,
-      brand_name,
+      brand,
       colorway,
       style_id,
       image_url,
@@ -162,6 +176,7 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
         sneakerData.sell_price !== '' ? parseFloat(sneakerData.sell_price) : 0,
       is_item_public: sneakerData.is_item_public === isItemPublicSelections[0],
       size_id: sizeValue,
+      status: sneakerData.status ? 1 : 0,
     };
 
     let response;
@@ -174,7 +189,8 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
 
     if (!response.error) {
       dispatch(fetchOwnInventoryItems());
-      setSneakerData({ ...initSneakerData });
+      dispatch(fetchOwnSoldInventoryItems());
+        setSneakerData({ ...initSneakerData });
       dispatch(showSnackbar(isEdit ? 'Предмет обновлен' : 'Предмет добавлен'));
       onClose();
     }
@@ -222,10 +238,11 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
             {renderMainInput('c', 'Цена покупки', 'buy_price', true)}
             {renderMainInput('d', 'Цена продажи', 'sell_price', true)}
             {renderMainSelect('e', 'Валюта', 'currency', currencies)}
-            {renderMainInput('f', 'Бренд', 'brand_name')}
+            {renderMainInput('f', 'Бренд', 'brand')}
             {rednerSizeChart('g')}
+            {renderCheckMark('h', 'Товар Продан', 'status')}
             {renderMainSelect(
-              'h',
+              'i',
               'Приватность',
               'is_item_public',
               isItemPublicSelections
@@ -285,7 +302,7 @@ const MainInfoInputsWrapper = styled.div`
     'a b b' auto
     'c d e' auto
     'f g g'
-    'h h .' auto / 1fr 1fr 1fr;
+    'h i i' auto / 1fr 1fr 1fr;
 `;
 
 const MainInfoInputWrapper = styled.div`

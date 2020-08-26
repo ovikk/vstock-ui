@@ -4,17 +4,17 @@ import { handleActions } from 'redux-actions';
 
 const defaultState = {
   items: undefined,
-  isFetchingItems: true,
+  soldItems: undefined,
   ownInventoryId: 0,
 };
 
 export default handleActions(
   {
-    [inventoryActions.setIsFetching]: (state, action) => {
-      return { ...state, isFetchingItems: action.payload };
-    },
     [inventoryActions.setItemList]: (state, action) => {
       return { ...state, items: action.payload };
+    },
+    [inventoryActions.setSoldItemList]: (state, action) => {
+      return { ...state, soldItems: action.payload };
     },
     [inventoryActions.setOwnInventoryId]: (state, action) => {
       return { ...state, ownInventoryId: action.payload };

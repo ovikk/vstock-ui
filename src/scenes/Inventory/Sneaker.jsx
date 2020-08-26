@@ -12,7 +12,10 @@ import ArrowUp from '@material-ui/icons/ExpandLess';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import Api from 'Api';
-import { fetchOwnInventoryItems } from './inventoryActions';
+import {
+  fetchOwnInventoryItems,
+  fetchOwnSoldInventoryItems,
+} from './inventoryActions';
 import { showSnackbar } from 'components/Snackbar/snackbarActions';
 
 import stockXIcon from 'assets/stockX_icon.svg';
@@ -24,8 +27,12 @@ import { currencySymbols } from 'Util.js';
 const Sneaker = ({ item, onEditClick }) => {
   const { product } = item;
 
+  const isSold = item.status === 1;
+
   const [isDeleteClicked, setIsDeleteClicked] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const profitAmount = item.sell_price - item.buy_price;
 
   const [prices, setPrices] = useState(undefined);
 
@@ -61,6 +68,7 @@ const Sneaker = ({ item, onEditClick }) => {
       const response = await Api.deleteItem(item.id);
       if (!response.error) {
         dispatch(fetchOwnInventoryItems());
+        dispatch(fetchOwnSoldInventoryItems());
       }
       dispatch(showSnackbar('Предмет удален'));
     }, 600);
@@ -108,7 +116,6 @@ const Sneaker = ({ item, onEditClick }) => {
         <ItemMainInfoWrapper>
           <ItemMainInfoTop>
             <ItemName>{item.name}</ItemName>
-            <ItemLink>Подробнее</ItemLink>
             <ItemConstWrapper>
               <ItemCost>
                 {item.buy_price}
@@ -122,12 +129,21 @@ const Sneaker = ({ item, onEditClick }) => {
               <ItemMainInfoBottomText>{item.size_title}</ItemMainInfoBottomText>
             </ItemMainInfoBottomSection>
 
-            <ItemMainInfoBottomSection>
-              <ItemMainInfoBottomTitle>Источник</ItemMainInfoBottomTitle>
-              <ItemMainInfoBottomText>
-                {product.buy_source || '-'}
-              </ItemMainInfoBottomText>
-            </ItemMainInfoBottomSection>
+            {isSold ? (
+              <ItemMainInfoBottomSection>
+                <ItemMainInfoBottomTitle>Покупатель</ItemMainInfoBottomTitle>
+                <ItemMainInfoBottomText>
+                  {product.sell_source || '-'}
+                </ItemMainInfoBottomText>
+              </ItemMainInfoBottomSection>
+            ) : (
+              <ItemMainInfoBottomSection>
+                <ItemMainInfoBottomTitle>Источник</ItemMainInfoBottomTitle>
+                <ItemMainInfoBottomText>
+                  {product.buy_source || '-'}
+                </ItemMainInfoBottomText>
+              </ItemMainInfoBottomSection>
+            )}
 
             <ItemMainInfoBottomSection>
               <ItemMainInfoBottomTitle>Цвет</ItemMainInfoBottomTitle>
@@ -135,13 +151,23 @@ const Sneaker = ({ item, onEditClick }) => {
                 {product.colorway}
               </ItemMainInfoBottomText>
             </ItemMainInfoBottomSection>
+
+            {isSold && (
+              <ItemProfit profit={profitAmount}>
+                {profitAmount > 0 && '+'}
+                {profitAmount}
+                {renderCurrency(item.currency)}
+              </ItemProfit>
+            )}
           </ItemMainInfoBottom>
         </ItemMainInfoWrapper>
 
-        <ItemButtonsWrapper>
-          <ItemButton>Продано</ItemButton>
-          <ItemButton>Разместить</ItemButton>
-        </ItemButtonsWrapper>
+        {!isSold && (
+          <ItemButtonsWrapper>
+            <ItemButton>Продано</ItemButton>
+            <ItemButton>Разместить</ItemButton>
+          </ItemButtonsWrapper>
+        )}
 
         <ItemControls>
           <Tooltip title="Удалить">
@@ -245,7 +271,7 @@ const ItemMainInfoWrapper = styled.div`
   height: 75%;
   align-self: center;
   margin: 0px 20px;
-
+  flex: 1;
   width: 70%;
 `;
 const ItemMainInfoTop = styled.div`
@@ -288,6 +314,13 @@ const ItemMainInfoBottom = styled.div`
   width: 100%;
   height: 50%;
   margin-top: 20px;
+`;
+
+const ItemProfit = styled.span`
+  font-size: 24px;
+  color: ${({ theme, profit }) =>
+    profit > 0 ? theme.colors.approveColor : theme.colors.errorColor};
+  margin-left: auto;
 `;
 
 const ItemMainInfoBottomSection = styled.div`

@@ -3,18 +3,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import AddIcon from '@material-ui/icons/Add';
 import theme from 'theme';
+import Swither from 'components/Switcher';
 import SearchInput from 'components/SearchInput';
 import ListWithShadows from 'components/ListWithShadows';
 
 import Sneaker from './Sneaker';
 import AddSneakerModal from './AddSneaker';
 
-import { fetchOwnInventoryItems } from './inventoryActions';
+import {
+  fetchOwnInventoryItems,
+  fetchOwnSoldInventoryItems,
+} from './inventoryActions';
 
 import { currencies, isItemPublicSelections } from 'Util.js';
 
 const Inventory = () => {
-  const [stockState, setStockState] = useState(0);
+  const [pageState, setPageState] = useState(0);
   const [showAddSneakerModal, setShowAddSneakerModal] = useState(false);
   const [showEditSneakerModal, setShowEditSneakerModal] = useState(false);
 
@@ -22,7 +26,7 @@ const Inventory = () => {
 
   const dispatch = useDispatch();
 
-  const { items, isFetchingItems } = useSelector((state) => state.inventory);
+  const { items, soldItems } = useSelector((state) => state.inventory);
 
   const onEditClick = (item) => {
     const {
@@ -33,7 +37,8 @@ const Inventory = () => {
       buy_price,
       name,
       is_item_public,
-      size_id
+      size_id,
+      status
     } = item;
 
     const editSneakerData = {
@@ -42,11 +47,12 @@ const Inventory = () => {
       image_url: product.image_url,
       style_id: product.style_id,
       colorway: product.colorway || '',
-      brand: product.brand_name || '',
+      brand: product.brand|| '',
       size_id: size_id || -1,
       buy_price: buy_price || '',
       sell_price: sell_price || '',
       currency: currency || currencies[0],
+      status,
       is_item_public:
         is_item_public !== undefined && is_item_public !== null
           ? is_item_public
@@ -60,19 +66,23 @@ const Inventory = () => {
   };
 
   useEffect(() => {
-    if (items === undefined) {
+    if (pageState === 0 && items === undefined) {
       dispatch(fetchOwnInventoryItems());
     }
-  }, []);
 
-  const renderItemList = () => {
-    if (isFetchingItems) return <div>Spinner</div>;
+    if (pageState === 1 && soldItems === undefined) {
+      dispatch(fetchOwnSoldInventoryItems());
+    }
+  }, [pageState]);
 
-    if (!items) return null;
+  const renderItemList = (itemArray) => {
+    if (itemArray === undefined) return <div>Spinner</div>;
 
-    items.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    if (!itemArray) return null;
 
-    return items.map((item, index) => (
+    itemArray.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+    return itemArray.map((item, index) => (
       <Sneaker key={item.id} item={item} onEditClick={onEditClick} />
     ));
   };
@@ -96,6 +106,12 @@ const Inventory = () => {
         />
       )}
 
+      <Swither
+        currentState={pageState}
+        setState={setPageState}
+        statesArray={['Инвентарь', 'Продажи']}
+      />
+
       <TopBarWrapper>
         <SearchInput placeholder="Что ищем?" />
 
@@ -105,7 +121,9 @@ const Inventory = () => {
         </AddButton>
       </TopBarWrapper>
 
-      <ListWithShadows>{renderItemList()}</ListWithShadows>
+      <ListWithShadows>
+        {renderItemList(pageState === 0 ? items : soldItems)}
+      </ListWithShadows>
     </MainWrapper>
   );
 };

@@ -6,6 +6,7 @@ const logoutUrl = `${env.server}/api/v1/logout`;
 const authUrl = `${env.server}/api/v1/auth`;
 
 const getInventoryByIdUrl = `${env.server}/api/v1/inventory`;
+const getSoldInventoryUrl = `${env.server}/api/v1/inventory/sold/`
 const getOwnInventoryUrl = `${env.server}/api/v1/inventory`;
 const getDealersInventoryUrl = `${env.server}/api/v1/inventory/trusted/`;
 
@@ -82,6 +83,10 @@ const getOwnInventory = () => {
   return get(getOwnInventoryUrl);
 };
 
+const getOwnSoldInventory = () => {
+  return get(getSoldInventoryUrl);
+}
+
 const getSneakersSuggestions = (input: string) => {
   return get(`${getSneakersSuggestionsUrl}?q=${input}`);
 };
@@ -141,6 +146,7 @@ const api = {
   auth,
   getInventoryById,
   getOwnInventory,
+  getOwnSoldInventory,
   getSneakersSuggestions,
   addItemToInventory,
   editItem,
