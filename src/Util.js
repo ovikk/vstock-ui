@@ -6,6 +6,7 @@ export const currencySymbols = {
   USD: '$',
 };
 export const isItemPublicSelections = ['Виден всем', 'Виден только себе'];
+export const itemStatus = ['']
 export const sizes = [
   'US 3',
   'US 3.5',

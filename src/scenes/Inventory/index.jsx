@@ -19,7 +19,7 @@ import { currencies, isItemPublicSelections } from 'Util.js';
 
 const Inventory = () => {
   const [pageState, setPageState] = useState(0);
-  const [showAddSneakerModal, setShowAddSneakerModal] = useState(true);
+  const [showAddSneakerModal, setShowAddSneakerModal] = useState(false);
   const [showEditSneakerModal, setShowEditSneakerModal] = useState(false);
 
   const [editSneakerData, setEditSneakerData] = useState({});

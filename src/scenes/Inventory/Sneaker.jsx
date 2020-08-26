@@ -133,14 +133,14 @@ const Sneaker = ({ item, onEditClick }) => {
               <ItemMainInfoBottomSection>
                 <ItemMainInfoBottomTitle>Покупатель</ItemMainInfoBottomTitle>
                 <ItemMainInfoBottomText>
-                  {product.sell_source || '-'}
+                  {item.sell_source || '-'}
                 </ItemMainInfoBottomText>
               </ItemMainInfoBottomSection>
             ) : (
               <ItemMainInfoBottomSection>
                 <ItemMainInfoBottomTitle>Источник</ItemMainInfoBottomTitle>
                 <ItemMainInfoBottomText>
-                  {product.buy_source || '-'}
+                  {item.buy_source || '-'}
                 </ItemMainInfoBottomText>
               </ItemMainInfoBottomSection>
             )}
