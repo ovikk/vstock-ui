@@ -19,7 +19,7 @@ import { currencies, isItemPublicSelections } from 'Util.js';
 
 const Inventory = () => {
   const [pageState, setPageState] = useState(0);
-  const [showAddSneakerModal, setShowAddSneakerModal] = useState(false);
+  const [showAddSneakerModal, setShowAddSneakerModal] = useState(true);
   const [showEditSneakerModal, setShowEditSneakerModal] = useState(false);
 
   const [editSneakerData, setEditSneakerData] = useState({});
@@ -38,7 +38,12 @@ const Inventory = () => {
       name,
       is_item_public,
       size_id,
-      status
+      status,
+      buy_date,
+      sell_date,
+      sell_source,
+      comment,
+      buy_source,
     } = item;
 
     const editSneakerData = {
@@ -47,12 +52,17 @@ const Inventory = () => {
       image_url: product.image_url,
       style_id: product.style_id,
       colorway: product.colorway || '',
-      brand: product.brand|| '',
+      brand: product.brand || '',
       size_id: size_id || -1,
       buy_price: buy_price || '',
       sell_price: sell_price || '',
       currency: currency || currencies[0],
-      status,
+      status: !!status,
+      sell_source,
+      buy_date,
+      sell_date,
+      comment,
+      buy_source,
       is_item_public:
         is_item_public !== undefined && is_item_public !== null
           ? is_item_public

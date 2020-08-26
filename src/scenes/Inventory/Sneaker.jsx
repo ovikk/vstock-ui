@@ -118,7 +118,7 @@ const Sneaker = ({ item, onEditClick }) => {
             <ItemName>{item.name}</ItemName>
             <ItemConstWrapper>
               <ItemCost>
-                {item.buy_price}
+                {isSold ? item.sell_price : item.buy_price}
                 {renderCurrency(item.currency)}
               </ItemCost>
             </ItemConstWrapper>

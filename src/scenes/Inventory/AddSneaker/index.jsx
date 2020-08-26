@@ -9,10 +9,15 @@ import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import AutoComplete from 'scenes/Inventory/AddSneaker/AutoComplete';
+import moment from 'moment';
 import Api from 'Api';
-import { fetchOwnInventoryItems, fetchOwnSoldInventoryItems } from '../inventoryActions';
+import {
+  fetchOwnInventoryItems,
+  fetchOwnSoldInventoryItems,
+} from '../inventoryActions';
 import { showSnackbar } from 'components/Snackbar/snackbarActions';
 import Spinner from 'components/Spinner';
+import { DatePicker } from '@material-ui/pickers';
 import { currencies, isItemPublicSelections, sizes } from 'Util.js';
 
 const initSneakerData = {
@@ -22,9 +27,14 @@ const initSneakerData = {
   brand: '',
   buy_price: '',
   sell_price: '',
+  sell_source: '',
   currency: currencies[0],
   is_item_public: isItemPublicSelections[0],
-  status: 0,
+  status: false,
+  buy_date: new Date(),
+  sell_date: new Date(),
+  comment: '',
+  buy_source: '',
 };
 
 const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
@@ -35,6 +45,7 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
   const [sizeValue, setSizeValue] = useState(
     isEdit ? editSneakerData.size_id : -1
   );
+
   const [sizeChart, setSizeChart] = useState(undefined);
   const [sizeChartLoading, setSizeChartLoading] = useState(false);
 
@@ -115,6 +126,23 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
     );
   };
 
+  const renderDatePicker = (gridArea, title, dataKey) => {
+    return (
+      <MainInfoInputWrapper gridArea={gridArea}>
+        <MainInfoInputTitle>{title}</MainInfoInputTitle>
+        <CustomDatePicker
+          format="DD/MM/yyyy"
+          value={sneakerData[dataKey]}
+          onChange={(date) => {
+            const newData = { ...sneakerData };
+            newData[dataKey] = date;
+            setSneakerData(newData);
+          }}
+        />
+      </MainInfoInputWrapper>
+    );
+  };
+
   const rednerSizeChart = (gridArea) => {
     return (
       <MainInfoInputWrapper gridArea={gridArea}>
@@ -160,7 +188,7 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
       style_id,
       image_url,
       buy_price: retail_price,
-      currency: currencies[1],
+      currency: currencies[0],
       name: itemName,
     }));
   };
@@ -177,6 +205,9 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
       is_item_public: sneakerData.is_item_public === isItemPublicSelections[0],
       size_id: sizeValue,
       status: sneakerData.status ? 1 : 0,
+      buy_date: moment(sneakerData.buy_date).toISOString(),
+      sell_date: moment(sneakerData.sell_date).toISOString(),
+      sell_source: sneakerData.sell_source,
     };
 
     let response;
@@ -190,7 +221,7 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
     if (!response.error) {
       dispatch(fetchOwnInventoryItems());
       dispatch(fetchOwnSoldInventoryItems());
-        setSneakerData({ ...initSneakerData });
+      setSneakerData({ ...initSneakerData });
       dispatch(showSnackbar(isEdit ? 'Предмет обновлен' : 'Предмет добавлен'));
       onClose();
     }
@@ -234,21 +265,39 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
 
           <MainInfoInputsWrapper>
             {renderMainInput('a', 'Артикул', 'style_id')}
-            {renderMainInput('b', 'Цвет', 'colorway')}
-            {renderMainInput('c', 'Цена покупки', 'buy_price', true)}
-            {renderMainInput('d', 'Цена продажи', 'sell_price', true)}
+            {rednerSizeChart('b')}
+
+            {renderMainInput('c', 'Бренд', 'brand')}
+            {renderMainInput('d', 'Цвет', 'colorway')}
+
             {renderMainSelect('e', 'Валюта', 'currency', currencies)}
-            {renderMainInput('f', 'Бренд', 'brand')}
-            {rednerSizeChart('g')}
+            {renderMainInput('f', 'Цена покупки', 'buy_price', true)}
+            {renderDatePicker('g', 'Дата покупки', 'buy_date')}
+
             {renderCheckMark('h', 'Товар Продан', 'status')}
-            {renderMainSelect(
-              'i',
+
+            {sneakerData.status &&
+              renderMainInput('i', 'Цена продажи', 'sell_price', true)}
+            {sneakerData.status &&
+              renderDatePicker('j', 'Дата продажи', 'sell_date')}
+
+            {sneakerData.status &&
+              renderMainInput('k', 'Покупатель', 'sell_source')}
+
+            {/* {renderMainSelect(
+              'k',
               'Приватность',
               'is_item_public',
               isItemPublicSelections
-            )}
+            )} */}
           </MainInfoInputsWrapper>
         </MainInfoWrapper>
+
+        <AdditionalInfoInputWrapper>
+          {renderMainInput('a', 'Комментарий', 'comment')}
+          {renderMainInput('b', 'Источник', 'buy_source')}
+        </AdditionalInfoInputWrapper>
+
         <AddButton
           disabled={
             !sneakerData.style_id || itemName.length < 2 || sizeValue === -1
@@ -267,7 +316,7 @@ export default AddSneakerModal;
 const MainWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.modalBackground};
   width: 1000px;
-  height: 800px;
+  height: 850px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -276,13 +325,12 @@ const MainWrapper = styled.div`
 
 const MainInfoWrapper = styled.div`
   width: 100%;
-  height: 300px;
   display: flex;
 `;
 
 const ImageWrapper = styled.div`
   flex: 4;
-  height: 100%;
+  height: 300px;
   background-color: ${({ theme }) => theme.colors.secondaryColor};
   border-radius: 10px;
   margin-right: 100px;
@@ -296,18 +344,26 @@ const SneakerImage = styled.img`
 
 const MainInfoInputsWrapper = styled.div`
   flex: 6;
-  height: 100%;
   display: grid;
   grid-template:
     'a b b' auto
-    'c d e' auto
-    'f g g'
-    'h i i' auto / 1fr 1fr 1fr;
+    'c d d' auto
+    'e f g' auto
+    'h i j'
+    'k k .' auto / 1fr 1fr 1fr;
+`;
+
+const AdditionalInfoInputWrapper = styled.div`
+  width: 100%;
+  display: grid;
+  grid-template:
+    'a a a a a' auto
+    'b b c . .' auto / 1fr 1fr 1fr 1fr 1fr;
 `;
 
 const MainInfoInputWrapper = styled.div`
   box-sizing: border-box;
-  padding: 20px 20px;
+  padding: 15px 40px 15px 0px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -398,5 +454,11 @@ const AddButton = styled(Button)`
     :hover {
       background-color: pink;
     }
+  }
+`;
+
+const CustomDatePicker = styled(DatePicker)`
+  && {
+    color: ${({ theme }) => theme.colors.textColor};
   }
 `;
