@@ -13,7 +13,7 @@ import Account from './Account';
 
 import theme from 'theme.ts';
 
-import { fetchOwnDealers } from './dealersActions';
+import { fetchOwnDealers, fetchDealersInventory } from './dealersActions';
 
 const DealersList = () => {
   const { dealersList } = useSelector((state) => state.dealers);
@@ -49,6 +49,7 @@ const DealersList = () => {
     if (!response.error) {
       dispatch(showSnackbar(`Дилер ${dealerLogin} удален`));
       dispatch(fetchOwnDealers());
+      dispatch(fetchDealersInventory());
     } else {
       dispatch(showSnackbar(`Ошибка при удалени ${dealerLogin} дилера`));
     }

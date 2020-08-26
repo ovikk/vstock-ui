@@ -107,12 +107,15 @@ const Sneaker = ({ item, onEditClick }) => {
   return (
     <ItemWrapper isDeleteClicked={isDeleteClicked}>
       <ItemTopWrapper>
-        <ItemImage
-          src={
-            product.image_url ||
-            'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'
-          }
-        />
+        <ItemImageWrapper>
+          <ItemImage
+            src={
+              product.image_url ||
+              'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'
+            }
+          />
+        </ItemImageWrapper>
+
         <ItemMainInfoWrapper>
           <ItemMainInfoTop>
             <ItemName>{item.name}</ItemName>
@@ -260,11 +263,19 @@ const ItemTopWrapper = styled.div`
   flex-direction: row;
   height: 120px;
 `;
+
+const ItemImageWrapper = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
+`;
+
 const ItemImage = styled.img`
-  height: 90%;
   width: 150px;
+  height: auto;
   margin-right: 10px;
 `;
+
 const ItemMainInfoWrapper = styled.div`
   display: flex;
   flex-direction: column;
