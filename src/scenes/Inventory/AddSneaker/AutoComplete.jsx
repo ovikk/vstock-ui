@@ -145,10 +145,11 @@ const SingleSuggestionWrapper = styled.div`
 `;
 
 const SingleSuggestionImage = styled.img`
-  height: 100%;
-  width: auto;
+  height: auto;
+  width: 130px;
   border-radius: 10px;
   margin-left: 5px;
+  margin-right: 10px;
 `;
 
 const SingleSuggestionName = styled.span`
