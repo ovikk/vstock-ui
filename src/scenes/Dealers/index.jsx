@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Switcher from 'components/Switcher';
 
@@ -6,8 +6,29 @@ import DealersInventory from './DealersInventory';
 import DealersList from './DelaersList';
 import BuyersList from './BuyersList';
 
+import { useLocation, useHistory } from 'react-router-dom';
+
+const pageStates = { dealersInventory: 0, dealers: 1, buyers: 2 };
+
 const Dealers = () => {
-  const [pageState, setPageState] = useState(0);
+  const history = useHistory();
+  const query = new URLSearchParams(useLocation().search);
+  const pageQuery = query.get('page');
+  const [pageState, setPageState] = useState(pageStates[pageQuery] || 0);
+
+  useEffect(() => {
+    if (pageState === 0) {
+      history.push('/app/dealers?page=dealersInventory');
+    }
+
+    if (pageState === 1) {
+      history.push('/app/dealers?page=dealers');
+    }
+
+    if (pageState === 2) {
+      history.push('/app/dealers?page=buyers');
+    }
+  }, [pageState]);
 
   return (
     <MainWrapper>

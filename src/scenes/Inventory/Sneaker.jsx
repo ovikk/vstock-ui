@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import moment from 'moment';
 import theme from 'theme';
 
 import CloseIcon from '@material-ui/icons/Close';
@@ -24,7 +25,7 @@ import outOfStockIcon from 'assets/outOfStock_icon.svg';
 
 import { currencySymbols } from 'Util.js';
 
-const Sneaker = ({ item, onEditClick }) => {
+const Sneaker = ({ item, onEditClick, onSellClick }) => {
   const { product } = item;
 
   const isSold = item.status === 1;
@@ -167,7 +168,7 @@ const Sneaker = ({ item, onEditClick }) => {
 
         {!isSold && (
           <ItemButtonsWrapper>
-            <ItemButton>Продано</ItemButton>
+            <ItemButton onClick={() => onSellClick(item)}>Продано</ItemButton>
             <ItemButton>Разместить</ItemButton>
           </ItemButtonsWrapper>
         )}
@@ -225,7 +226,7 @@ const Sneaker = ({ item, onEditClick }) => {
             <ItemBottomInfoSection>
               <ItemMainInfoBottomTitle>Дата Выхода</ItemMainInfoBottomTitle>
               <ItemMainInfoBottomText>
-                {product.release_date}
+                {moment(product.release_date).format('L')}
               </ItemMainInfoBottomText>
             </ItemBottomInfoSection>
 

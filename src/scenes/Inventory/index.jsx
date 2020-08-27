@@ -9,6 +9,9 @@ import ListWithShadows from 'components/ListWithShadows';
 
 import Sneaker from './Sneaker';
 import AddSneakerModal from './AddSneaker';
+import SellSneakerModal from './SellSneakerModal';
+
+import { useLocation, useHistory } from 'react-router-dom';
 
 import {
   fetchOwnInventoryItems,
@@ -17,16 +20,53 @@ import {
 
 import { currencies, isItemPublicSelections } from 'Util.js';
 
-const Inventory = () => {
-  const [pageState, setPageState] = useState(0);
-  const [showAddSneakerModal, setShowAddSneakerModal] = useState(false);
-  const [showEditSneakerModal, setShowEditSneakerModal] = useState(false);
+const pageStates = { own: 0, sold: 1 };
 
+const Inventory = () => {
+  const history = useHistory();
+  const query = new URLSearchParams(useLocation().search);
+  const pageQuery = query.get('page');
+  const [pageState, setPageState] = useState(pageStates[pageQuery] || 0);
+
+  useEffect(() => {
+    history.push(`/app/inventory?page=${pageStates[pageState] || 0}`);
+    if (pageState === 0) {
+      items === undefined && dispatch(fetchOwnInventoryItems());
+      history.push('/app/inventory?page=own');
+    }
+    if (pageState === 1) {
+      soldItems === undefined && dispatch(fetchOwnSoldInventoryItems());
+      history.push('/app/inventory?page=sold');
+    }
+  }, [pageState]);
+
+  const [showAddSneakerModal, setShowAddSneakerModal] = useState(false);
+
+  const [showEditSneakerModal, setShowEditSneakerModal] = useState(false);
   const [editSneakerData, setEditSneakerData] = useState({});
+
+  const [showSellSneakerModal, setShowSellSneakerModal] = useState(false);
+  const [sellSneakerData, setSellSneakerData] = useState({});
 
   const dispatch = useDispatch();
 
   const { items, soldItems } = useSelector((state) => state.inventory);
+
+  const onSellClick = (item) => {
+    const { name, size_title, sell_price, sell_source, currency, product, id } = item;
+
+    setSellSneakerData({
+      id,
+      name,
+      size_title,
+      sell_price,
+      sell_source,
+      currency,
+      product
+    });
+
+    setShowSellSneakerModal(true);
+  };
 
   const onEditClick = (item) => {
     const {
@@ -75,16 +115,6 @@ const Inventory = () => {
     setShowEditSneakerModal(true);
   };
 
-  useEffect(() => {
-    if (pageState === 0 && items === undefined) {
-      dispatch(fetchOwnInventoryItems());
-    }
-
-    if (pageState === 1 && soldItems === undefined) {
-      dispatch(fetchOwnSoldInventoryItems());
-    }
-  }, [pageState]);
-
   const renderItemList = (itemArray) => {
     if (itemArray === undefined) return <div>Spinner</div>;
 
@@ -93,26 +123,28 @@ const Inventory = () => {
     itemArray.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     return itemArray.map((item, index) => (
-      <Sneaker key={item.id} item={item} onEditClick={onEditClick} />
+      <Sneaker key={item.id} item={item} onEditClick={onEditClick} onSellClick={onSellClick}/>
     ));
   };
 
   return (
     <MainWrapper>
-      {showAddSneakerModal && (
+      {(showAddSneakerModal || showEditSneakerModal) && (
         <AddSneakerModal
-          showModal={showAddSneakerModal}
-          onClose={() => setShowAddSneakerModal(false)}
-          isEdit={false}
+          onClose={() =>
+            showAddSneakerModal
+              ? setShowAddSneakerModal(false)
+              : setShowEditSneakerModal(false)
+          }
+          isEdit={showEditSneakerModal}
+          editSneakerData={(showEditSneakerModal && editSneakerData) || null}
         />
       )}
 
-      {showEditSneakerModal && (
-        <AddSneakerModal
-          showModal={showEditSneakerModal}
-          onClose={() => setShowEditSneakerModal(false)}
-          editSneakerData={editSneakerData}
-          isEdit={true}
+      {showSellSneakerModal && (
+        <SellSneakerModal
+          onClose={() => setShowSellSneakerModal(false)}
+          data={sellSneakerData}
         />
       )}
 

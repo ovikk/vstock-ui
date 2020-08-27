@@ -28,7 +28,7 @@ const initSneakerData = {
   buy_price: '',
   sell_price: '',
   sell_source: '',
-  currency: currencies[0],
+  currency: 'RUB',
   is_item_public: isItemPublicSelections[0],
   status: false,
   buy_date: new Date(),
@@ -37,7 +37,7 @@ const initSneakerData = {
   buy_source: '',
 };
 
-const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
+const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
   const [sneakerData, setSneakerData] = useState(
     isEdit ? { ...editSneakerData } : { ...initSneakerData }
   );
@@ -178,9 +178,6 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
 
   const setSneakerDataFromAutoComplete = async (data) => {
     const { brand, colorway, style_id, image_url, retail_price } = data;
-
-    console.log(data);
-
     setSneakerData((data) => ({
       ...data,
       brand,
@@ -188,26 +185,46 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
       style_id,
       image_url,
       buy_price: retail_price,
-      currency: currencies[0],
+      currency: 'RUB',
       name: itemName,
     }));
   };
 
   const onAddItemClick = async () => {
+    const {
+      style_id,
+      is_item_public,
+      brand,
+      sell_price,
+      buy_price,
+      currency,
+      status,
+      buy_date,
+      sell_date,
+      sell_source,
+      buy_source,
+      comment,
+    } = sneakerData;
+
+    console.log({ sizeChart, sizeValue });
+
     const data = {
       inventory_id: ownInventoryId,
-      ...sneakerData,
+      style_id,
+      is_item_public: is_item_public === isItemPublicSelections[0],
       name: itemName,
-      buy_price:
-        sneakerData.buy_price !== '' ? parseFloat(sneakerData.buy_price) : 0,
-      sell_price:
-        sneakerData.sell_price !== '' ? parseFloat(sneakerData.sell_price) : 0,
-      is_item_public: sneakerData.is_item_public === isItemPublicSelections[0],
+      brand,
+      sell_price: sell_price !== '' ? parseFloat(sell_price) : 0,
+      buy_price: buy_price !== '' ? parseFloat(buy_price) : 0,
+      currency,
+      size_title: sizeChart.find((s) => s.id === sizeValue).title,
       size_id: sizeValue,
-      status: sneakerData.status ? 1 : 0,
-      buy_date: moment(sneakerData.buy_date).toISOString(),
-      sell_date: moment(sneakerData.sell_date).toISOString(),
-      sell_source: sneakerData.sell_source,
+      status: status ? 1 : 0,
+      buy_date: moment(buy_date).toISOString(),
+      sell_date: moment(sell_date).toISOString(),
+      sell_source,
+      buy_source,
+      comment,
     };
 
     let response;
@@ -230,7 +247,7 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
   return (
     <Dialog
       onClose={onClose}
-      open={showModal}
+      open={true}
       maxWidth="lg"
       PaperProps={{
         style: { borderRadius: 25 },
@@ -270,7 +287,7 @@ const AddSneakerModal = ({ showModal, onClose, isEdit, editSneakerData }) => {
             {renderMainInput('c', 'Бренд', 'brand')}
             {renderMainInput('d', 'Цвет', 'colorway')}
 
-            {renderMainSelect('e', 'Валюта', 'currency', currencies)}
+            {renderMainSelect('e', 'Валюта', 'currency', ['RUB'])}
             {renderMainInput('f', 'Цена покупки', 'buy_price', true)}
             {renderDatePicker('g', 'Дата покупки', 'buy_date')}
 
