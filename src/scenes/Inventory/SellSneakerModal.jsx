@@ -130,12 +130,6 @@ const SellSneakerModal = ({ onClose, data }) => {
         </TopTitleWrapper>
 
         <MainInfoWrapper>
-          <ImageWrapper>
-            {sneakerData.product.image_url && (
-              <SneakerImage src={sneakerData.product.image_url} />
-            )}
-          </ImageWrapper>
-
           <MainInfoInputsWrapper>
             {renderMainSelect('a', 'Валюта', 'currency', ['RUB'])}
             {renderMainInput('b', 'Цена продажи', 'sell_price', true)}
@@ -156,8 +150,8 @@ export default SellSneakerModal;
 
 const MainWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.modalBackground};
-  width: 1000px;
-  height: 500px;
+  width: 550px;
+  height: 350px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -169,39 +163,14 @@ const MainInfoWrapper = styled.div`
   display: flex;
 `;
 
-const ImageWrapper = styled.div`
-  flex: 4;
-  height: 300px;
-  background-color: ${({ theme }) => theme.colors.secondaryColor};
-  border-radius: 10px;
-  margin-right: 100px;
-
-  display: flex;
-  align-items: center;
-`;
-
-const SneakerImage = styled.img`
-  height: auto;
-  width: 100%;
-  border-radius: 10px;
-`;
-
 const MainInfoInputsWrapper = styled.div`
   flex: 6;
   display: grid;
   grid-template:
     'a b c' auto
-    '. . .' auto
     'd d d' auto / 1fr 1fr 1fr;
 `;
 
-const AdditionalInfoInputWrapper = styled.div`
-  width: 100%;
-  display: grid;
-  grid-template:
-    'a a a a a' auto
-    'b b c . .' auto / 1fr 1fr 1fr 1fr 1fr;
-`;
 
 const MainInfoInputWrapper = styled.div`
   box-sizing: border-box;
@@ -262,14 +231,16 @@ const MainSelect = styled(Select)`
 const TopTitleWrapper = styled.div`
   width: 100%;
   height: 40px;
+  margin-top: 10px;
+  margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 `;
 
 const TitleText = styled.span`
-  font-size: 18px;
-  color: ${({ theme }) => theme.colors.nonFocusedTextColor};
+  font-size: 24px;
+  color: ${({ theme }) => theme.colors.textColor};
 `;
 
 const SizePlaceholder = styled.span`
