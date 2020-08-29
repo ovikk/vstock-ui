@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import moment from 'moment';
 import {
   ThemeProvider as MaterialThemeProvider,
   createMuiTheme,
@@ -30,6 +31,8 @@ const materialTheme = createMuiTheme({
     type: 'dark',
   },
 });
+
+moment.locale('ru')
 
 ReactDOM.render(
   <Provider store={createStore(rootReducer, applyMiddleware(thunk))}>
