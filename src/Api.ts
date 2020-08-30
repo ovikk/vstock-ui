@@ -20,6 +20,8 @@ const addDealerUrl = `${env.server}/api/v1/merchants/dealers/add`;
 const getOwnBuyersUrl = `${env.server}/api/v1/merchants/buyers`;
 const getInviteLinkUrl = `${env.server}/api/v1/invite`;
 
+const getStatsUrl = `${env.server}/api/v1/stats?period=all`
+
 const apiFetch = async (url: string, opts: any) => {
   try {
     const response = await fetch(url, opts);
@@ -139,6 +141,10 @@ const getInviteLink = () => {
   return get(getInviteLinkUrl);
 };
 
+const getStats = () => {
+  return get(getStatsUrl)
+}
+
 const api = {
   login,
   registrate,
@@ -160,6 +166,7 @@ const api = {
   getItemSizeChartByChartId,
   getDealersInventory,
   getInviteLink,
+  getStats
 };
 
 export default api;

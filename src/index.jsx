@@ -32,7 +32,7 @@ const materialTheme = createMuiTheme({
   },
 });
 
-moment.locale('ru')
+moment.locale('ru');
 
 ReactDOM.render(
   <Provider store={createStore(rootReducer, applyMiddleware(thunk))}>

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Switcher = ({ currentState, setState, statesArray }) => {
+const Switcher = ({ currentState, setState, statesArray, width }) => {
   const getJustfify = (index, length) => {
     // if (index === 0) return 'flex-start';
     // if (index === length - 1) return 'flex-end';
@@ -16,6 +16,7 @@ const Switcher = ({ currentState, setState, statesArray }) => {
           isSelected={currentState === index}
           onClick={() => setState(index)}
           style={{ justifyContent: getJustfify(index, statesArray.length) }}
+          width={width}
         >
           {stateName}
         </StockSwitcherTab>
@@ -32,7 +33,7 @@ const StockSwithcerWrapper = styled.div`
 `;
 
 const StockSwitcherTab = styled.div`
-  width: 250px;
+  width: ${({width}) => width || '250px'};
   display: flex;
   align-items: center;
   font-size: 22px;
