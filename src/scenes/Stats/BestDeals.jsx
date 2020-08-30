@@ -68,7 +68,7 @@ const SneakerWrapper = styled.div`
 `;
 
 const ImageWrapper = styled.div`
-  width: 150px;
+  width: 180px;
   height: 100%;
   display: flex;
   align-items: center;
@@ -88,7 +88,7 @@ const MainInfoWrapper = styled.div`
 `;
 
 const MainInfoBrand = styled.div`
-  height: 50px;
+  height: 33%;
   width: 100%;
   color: ${({ theme }) => theme.colors.lighterBackground};
   font-size: 18px;
@@ -97,16 +97,19 @@ const MainInfoBrand = styled.div`
 `;
 
 const MainInfoName = styled.div`
-  flex: 1;
-  width: 100%;
+  margin-top: 4px;
+  width: 370px;
+  height: 33%;
   color: ${({ theme }) => theme.colors.textColor};
   font-size: 24px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const MainInfoBottom = styled.div`
-  height: 50px;
+  height: 33%;
   width: 100%;
-
   color: ${({ theme }) => theme.colors.lighterBackground};
   font-size: 18px;
   display: flex;
