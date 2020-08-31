@@ -6,7 +6,7 @@ const logoutUrl = `${env.server}/api/v1/logout`;
 const authUrl = `${env.server}/api/v1/auth`;
 
 const getInventoryByIdUrl = `${env.server}/api/v1/inventory`;
-const getSoldInventoryUrl = `${env.server}/api/v1/inventory/sold/`
+const getSoldInventoryUrl = `${env.server}/api/v1/inventory/sold/`;
 const getOwnInventoryUrl = `${env.server}/api/v1/inventory`;
 const getDealersInventoryUrl = `${env.server}/api/v1/inventory/trusted/`;
 
@@ -20,7 +20,10 @@ const addDealerUrl = `${env.server}/api/v1/merchants/dealers/add`;
 const getOwnBuyersUrl = `${env.server}/api/v1/merchants/buyers`;
 const getInviteLinkUrl = `${env.server}/api/v1/invite`;
 
-const getStatsUrl = `${env.server}/api/v1/stats?period=all`
+const getStatsAllUrl = `${env.server}/api/v1/stats?period=all`;
+const getStatsYearUrl = `${env.server}/api/v1/stats?period=year`;
+const getStatsMonthUrl = `${env.server}/api/v1/stats?period=month`;
+const getStatsWeekUrl = `${env.server}/api/v1/stats?period=week`;
 
 const apiFetch = async (url: string, opts: any) => {
   try {
@@ -87,7 +90,7 @@ const getOwnInventory = () => {
 
 const getOwnSoldInventory = () => {
   return get(getSoldInventoryUrl);
-}
+};
 
 const getSneakersSuggestions = (input: string) => {
   return get(`${getSneakersSuggestionsUrl}?q=${input}`);
@@ -141,9 +144,18 @@ const getInviteLink = () => {
   return get(getInviteLinkUrl);
 };
 
-const getStats = () => {
-  return get(getStatsUrl)
-}
+const getStatsAll = () => {
+  return get(getStatsAllUrl);
+};
+const getStatsYear = () => {
+  return get(getStatsYearUrl);
+};
+const getStatsMonth = () => {
+  return get(getStatsMonthUrl);
+};
+const getStatsWeek = () => {
+  return get(getStatsWeekUrl);
+};
 
 const api = {
   login,
@@ -166,7 +178,10 @@ const api = {
   getItemSizeChartByChartId,
   getDealersInventory,
   getInviteLink,
-  getStats
+  getStatsAll,
+  getStatsYear,
+  getStatsMonth,
+  getStatsWeek,
 };
 
 export default api;

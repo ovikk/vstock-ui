@@ -4,8 +4,6 @@ import styled from 'styled-components';
 import { currencySymbols } from 'Util.js';
 
 const BestDeals = ({ bestDeals }) => {
-  console.log(bestDeals);
-
   const renderSneaker = (sneaker) => {
     const { brand, name, style_id, size_title, product } = sneaker;
 
@@ -25,7 +23,7 @@ const BestDeals = ({ bestDeals }) => {
         </MainInfoWrapper>
 
         <PriceWrapper>
-          +{sneaker.profit} {currencySymbols[sneaker.currency]}
+          +{sneaker.profit.toLocaleString()} {currencySymbols[sneaker.currency]}
         </PriceWrapper>
       </SneakerWrapper>
     );
@@ -34,7 +32,7 @@ const BestDeals = ({ bestDeals }) => {
   return (
     <MainWrapper>
       {bestDeals.map((deal, i) => (
-        <React.Fragment>
+        <React.Fragment key={i}>
           {renderSneaker(deal)}
 
           {i !== bestDeals.length - 1 && <Divider />}
@@ -130,7 +128,7 @@ const MainInfoSize = styled.div`
 
 const PriceWrapper = styled.div`
   height: 100%;
-  width: 150px;
+  min-width: 150px;
   display: flex;
   align-items: center;
   justify-content: flex-end;

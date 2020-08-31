@@ -1,14 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const ListWithShadows = ({ children }) => {
+const ListWithShadows = ({ children, colorstart, colorend }) => {
   return (
     <ItemListWrapper>
-      <ShadowTop />
-
+      <ShadowTop colorstart={colorstart} colorend={colorend} />
       {children}
-
-      <ShadowBottom />
+      <ShadowBottom colorstart={colorstart} colorend={colorend} />
     </ItemListWrapper>
   );
 };
@@ -21,12 +19,13 @@ const ShadowTop = styled.div`
   z-index: 1;
   top: 0;
   pointer-events: none;
-  background-image: linear-gradient(
+
+  background-image: ${({ colorstart, colorend }) => `linear-gradient(
     to top,
-    rgba(0, 16, 34, 0),
-    rgba(0, 16, 34, 1) 90%
-  );
-  height: 40px;
+    ${colorstart || 'rgba(0, 16, 34, 0)'},
+    ${colorend || 'rgba(0, 16, 34, 1)'} 90%
+  )`};
+  height: 20px;
 `;
 const ShadowBottom = styled.div`
   content: '';
@@ -34,12 +33,12 @@ const ShadowBottom = styled.div`
   z-index: 1;
   bottom: 0;
   pointer-events: none;
-  background-image: linear-gradient(
+  background-image: ${({ colorstart, colorend }) => `linear-gradient(
     to bottom,
-    rgba(0, 16, 34, 0),
-    rgba(0, 16, 34, 1) 90%
-  );
-  height: 40px;
+    ${colorstart || 'rgba(0, 16, 34, 0)'},
+    ${colorend || 'rgba(0, 16, 34, 1)'} 90%
+  )`};
+  height: 20px;
 `;
 
 const ItemListWrapper = styled.div`
