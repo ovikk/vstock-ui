@@ -71,7 +71,7 @@ const Stats = () => {
       <Switcher
         currentState={pageState}
         setState={setPageState}
-        statesArray={['Все время', 'Год', 'Неделя', 'Месяц']}
+        statesArray={['Все время', 'Год', 'Месяц', 'Неделя']}
         width="150px"
       />
 
