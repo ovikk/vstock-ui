@@ -40,7 +40,7 @@ const Inventory = () => {
     }
   }, [pageState]);
 
-  const [showAddSneakerModal, setShowAddSneakerModal] = useState(false);
+  const [showAddSneakerModal, setShowAddSneakerModal] = useState(true);
 
   const [showEditSneakerModal, setShowEditSneakerModal] = useState(false);
   const [editSneakerData, setEditSneakerData] = useState({});

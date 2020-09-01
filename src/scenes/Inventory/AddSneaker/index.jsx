@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Api from 'Api';
+import moment from 'moment';
+import {
+  fetchOwnInventoryItems,
+  fetchOwnSoldInventoryItems,
+} from '../inventoryActions';
 import styled from 'styled-components';
 import Dialog from '@material-ui/core/Dialog';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -8,17 +14,14 @@ import IconButton from '@material-ui/core/IconButton';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
+import { DatePicker } from '@material-ui/pickers';
 import AutoComplete from 'scenes/Inventory/AddSneaker/AutoComplete';
-import moment from 'moment';
-import Api from 'Api';
-import {
-  fetchOwnInventoryItems,
-  fetchOwnSoldInventoryItems,
-} from '../inventoryActions';
 import { showSnackbar } from 'components/Snackbar/snackbarActions';
 import Spinner from 'components/Spinner';
-import { DatePicker } from '@material-ui/pickers';
 import { currencies, isItemPublicSelections, sizes } from 'Util.js';
+
+import Camera from 'assets/camera.svg';
+import SneakerPlaceholder from 'assets/sneaker_placeholder.svg';
 
 const initSneakerData = {
   image_url: '',
@@ -275,10 +278,27 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
 
         <MainInfoWrapper>
           <ImageWrapper>
-            {sneakerData.image_url && (
+            {sneakerData.image_url ? (
               <SneakerImage src={sneakerData.image_url} />
+            ) : (
+              <SneakerImage src={SneakerPlaceholder} />
             )}
           </ImageWrapper>
+
+          <AddPhotoWrapper>
+            <CustomImageWrapper>
+              <CustomSneakerImagePlaceholder src={SneakerPlaceholder} />
+            </CustomImageWrapper>
+            <CustomImageWrapper>
+              <CustomSneakerImagePlaceholder src={SneakerPlaceholder} />
+            </CustomImageWrapper>
+            <CustomImageWrapper>
+              <CustomSneakerImagePlaceholder src={SneakerPlaceholder} />
+            </CustomImageWrapper>
+            <CameraWrapper>
+              <CameraIcon src={Camera} />
+            </CameraWrapper>
+          </AddPhotoWrapper>
 
           <MainInfoInputsWrapper>
             {renderMainInput('a', 'Артикул', 'style_id')}
@@ -346,24 +366,64 @@ const MainInfoWrapper = styled.div`
 `;
 
 const ImageWrapper = styled.div`
-  flex: 4;
-  height: 300px;
+  width: 400px;
+  height: 350px;
   background-color: ${({ theme }) => theme.colors.secondaryColor};
   border-radius: 10px;
-  margin-right: 100px;
-
   display: flex;
   align-items: center;
+  justify-content: center;
 `;
 
 const SneakerImage = styled.img`
   height: auto;
-  width: 100%;
+  width: 90%;
   border-radius: 10px;
 `;
 
+const AddPhotoWrapper = styled.div`
+  height: 350px;
+  width: 100px;
+  margin: 0px 20px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const CustomImageWrapper = styled.div`
+  flex: 1;
+  margin: 5px 0px;
+  width: 100%;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${({ theme }) => theme.colors.secondaryColor};
+`;
+
+const CustomSneakerImagePlaceholder = styled.img`
+  height: auto;
+  width: 80%;
+  transform: rotate(30deg);
+`;
+
+const CameraWrapper = styled.div`
+  flex: 1;
+  margin: 5px 0px;
+  width: 100%;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+`;
+
+const CameraIcon = styled.img`
+  height: auto;
+  width: 50%;
+`;
+
 const MainInfoInputsWrapper = styled.div`
-  flex: 6;
+  width: 500px;
   display: grid;
   grid-template:
     'a b b' auto
