@@ -6,7 +6,7 @@ import theme from 'theme.ts';
 const SearchInput = ({ width, placeholder }) => {
   const [isFocused, setIsFocused] = useState(false);
   return (
-    <SearchWrapper style={{ width: width || 520 }} isFocused={isFocused}>
+    <SearchWrapper width={width} isFocused={isFocused}>
       <SearchIcon
         style={{
           ...SearchIconStyle,
@@ -27,7 +27,7 @@ const SearchInput = ({ width, placeholder }) => {
 export default SearchInput;
 
 const SearchWrapper = styled.div`
-  width: 520px;
+  width: ${({width})=>(width ? `${width} px` : '50%')};
   height: 40px;
   border-width: 2px;
   border-style: solid;

@@ -81,7 +81,7 @@ const ActionButton = styled(Button)`
   && {
     margin: 30px 0px;
     background-color: ${({ theme }) => theme.colors.mainColor};
-    width: 230px;
+    width: 300px;
     height: 55px;
     border-radius: 40px;
     color: ${({ theme }) => theme.colors.textColor};

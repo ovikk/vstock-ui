@@ -178,7 +178,7 @@ const DealerSneaker = ({ item, onEditClick }) => {
 export default DealerSneaker;
 
 const ItemWrapper = styled.div`
-  width: 100%;
+  width: 97%;
   background-color: ${({ theme }) => theme.colors.lightBackground};
   border-radius: 25px;
   margin-bottom: 25px;

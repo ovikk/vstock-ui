@@ -158,6 +158,11 @@ const Inventory = () => {
       <TopBarWrapper>
         <SearchInput placeholder="Что ищем?" />
 
+        {/* TODO: */}
+        <GroupButton onClick={() => setShowAddSneakerModal(true)}>
+          Группировка
+        </GroupButton>
+
         <AddButton onClick={() => setShowAddSneakerModal(true)}>
           Добавить
           <AddIcon style={AddIconStyle} />
@@ -172,6 +177,32 @@ const Inventory = () => {
 };
 
 export default Inventory;
+
+const GroupButton = styled.button`
+  outline: none;
+  border-radius: 40px;
+  width: 200px;
+  height: 40px;
+  text-align: left; 
+  border-width: 2px;
+  border-style: solid;
+  border-color: ${({ theme }) => theme.colors.mainColor};
+  /* background-color: ${({ theme }) => theme.colors.background}; */
+  background-color: inherit;
+  font-family: ${({ theme }) => theme.font};
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.textColor};
+  transition: 250ms;
+  margin-left: 50px;
+  cursor: pointer;
+  padding: 0 20px 2px;
+  &:hover {
+    color: ${({ theme }) => theme.colors.textColor};
+    box-shadow: ${({ theme }) =>
+      `0 0.1em 0.1em -0.05em ${theme.colors.mainColor}`};
+    transform: translateY(-0.25em);
+  }
+`;
 
 const MainWrapper = styled.div`
   width: 100%;

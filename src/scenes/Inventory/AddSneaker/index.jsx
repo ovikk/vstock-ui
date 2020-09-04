@@ -82,7 +82,7 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
             newData[dataKey] = e.target.value;
             setSneakerData(newData);
           }}
-          placeholder="-"
+          placeholder={title}
           type={isNumber ? 'number' : 'text'}
         />
       </MainInfoInputWrapper>
@@ -153,12 +153,11 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
         {sizeChartLoading ? (
           <Spinner size={25} />
         ) : sizeChart === undefined ? (
-          <SizePlaceholder>Введите артикул для сетки размеров</SizePlaceholder>
+          <SizePlaceholder>Размер US</SizePlaceholder>
         ) : sizeChart.length === 0 ? (
           <SizePlaceholder>Нет размерной сетки</SizePlaceholder>
         ) : (
           <MainSelect
-            style={{ width: '70%' }}
             value={sizeValue}
             onChange={(e) => {
               setSizeValue(e.target.value);
@@ -302,13 +301,13 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
 
           <MainInfoInputsWrapper>
             {renderMainInput('a', 'Артикул', 'style_id')}
-            {rednerSizeChart('b')}
+            {renderMainInput('b', 'Цвет', 'colorway')}
 
-            {renderMainInput('c', 'Бренд', 'brand')}
-            {renderMainInput('d', 'Цвет', 'colorway')}
+            {renderMainInput('c', 'Цена покупки', 'buy_price', true)}
+            {renderMainSelect('d', 'Валюта', 'currency', ['RUB'])}
 
-            {renderMainSelect('e', 'Валюта', 'currency', ['RUB'])}
-            {renderMainInput('f', 'Цена покупки', 'buy_price', true)}
+            {rednerSizeChart('e')}
+            {renderMainInput('f', 'Бренд', 'brand')}
             {renderDatePicker('g', 'Дата покупки', 'buy_date')}
 
             {renderCheckMark('h', 'Товар Продан', 'status')}
@@ -511,8 +510,11 @@ const TitleText = styled.span`
 `;
 
 const SizePlaceholder = styled.span`
-  font-size: 16px;
-  color: ${({ theme }) => theme.colors.textColor};
+  // color: ${({ theme }) => theme.colors.textColor};
+  color: #757575;
+  border-bottom: 2px solid #394974;
+  padding-bottom: 6px;
+  font-size: 18px;
 `;
 
 const CloseIcon = styled(CloseIconInit)`

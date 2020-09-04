@@ -244,7 +244,7 @@ const Sneaker = ({ item, onEditClick, onSellClick }) => {
 export default Sneaker;
 
 const ItemWrapper = styled.div`
-  width: 100%;
+  width: 97%;
   background-color: ${({ theme }) => theme.colors.lightBackground};
   border-radius: 25px;
   margin-bottom: 25px;
@@ -342,13 +342,16 @@ const ItemMainInfoBottomSection = styled.div`
 
 const ItemMainInfoBottomTitle = styled.span`
   color: ${({ theme }) => theme.colors.secondaryColor};
-  font-size: 14px;
+  font-size: 18px;
   margin-right: 10px;
 `;
 
 const ItemMainInfoBottomText = styled.span`
   color: ${({ theme }) => theme.colors.textColor};
-  font-size: 14px;
+  font-size: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 `;
 
 const ItemButtonsWrapper = styled.div`
@@ -371,7 +374,7 @@ const ItemButton = styled.button`
   /* background-color: ${({ theme }) => theme.colors.background}; */
   background-color: inherit;
   font-family: ${({ theme }) => theme.font};
-  font-size: 14px;
+  font-size: 18px;
   color: ${({ theme }) => theme.colors.textColor};
   transition: 250ms;
   margin-left: 20px;
@@ -447,7 +450,7 @@ const ItemBottomMarketIcon = styled.img`
 
 const ItemMarketPriceText = styled.span`
   color: ${({ theme }) => theme.colors.approveColor};
-  font-size: 14px;
+  font-size: 18px;
 `;
 
 const Spinner = styled(CircularProgress)`
