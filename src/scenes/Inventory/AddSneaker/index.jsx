@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Api from 'Api';
 import moment from 'moment';
@@ -23,6 +23,7 @@ import { currencies, isItemPublicSelections, sizes } from 'Util.js';
 
 import Camera from 'assets/camera.svg';
 import SneakerPlaceholder from 'assets/sneaker_placeholder.svg';
+import { SizeInput } from './SizeInput';
 
 
 const initSneakerData = {
@@ -44,34 +45,18 @@ const initSneakerData = {
 
 const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
   const [sneakerData, setSneakerData] = useState(
-    isEdit ? { ...editSneakerData } : { ...initSneakerData }
+    isEdit ? { ...editSneakerData, buy_date: moment(editSneakerData.buy_date) } : { ...initSneakerData }
   );
   const [itemName, setItemName] = useState(isEdit ? editSneakerData.name : '');
   const [sizeValue, setSizeValue] = useState(
     isEdit ? editSneakerData.size_id : -1
   );
 
-  const [sizeChart, setSizeChart] = useState(undefined);
-  const [sizeChartLoading, setSizeChartLoading] = useState(false);
+  const [sizeChart, setSizeChart] = useState(isEdit ? editSneakerData.sizes : undefined);
 
   const { ownInventoryId } = useSelector((state) => state.inventory);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (sneakerData.style_id) {
-      const getCharts = async () => {
-        setSizeChartLoading(true);
-        const request = await Api.getItemSizeChartByStyleId(
-          sneakerData.style_id
-        );
-        if (!request.error) {
-          setSizeChart(request.data ? request.data : []);
-        }
-        setSizeChartLoading(false);
-      };
-      getCharts();
-    }
-  }, [sneakerData.style_id]);
 
   const renderMainInput = (gridArea, title, dataKey, isNumber = false, disabled = false) => {
     return (
@@ -156,40 +141,16 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
   const rednerSizeChart = (gridArea) => {
     return (
       <MainInfoInputWrapper gridArea={gridArea}>
-        <MainInfoInputTitle>Размер</MainInfoInputTitle>
-        {sizeChartLoading ? (
-          <Spinner size={25} />
-        ) : sizeChart === undefined ? (
-          <SizePlaceholder>Размер US</SizePlaceholder>
-        ) : sizeChart.length === 0 ? (
-          <SizePlaceholder>Нет размерной сетки</SizePlaceholder>
-        ) : (
-                <MainSelect
-                  value={sizeValue}
-                  onChange={(e) => {
-                    setSizeValue(e.target.value);
-                  }}
-                >
-                  <MenuItem value={-1} disabled>
-                    Выберите размер
-            </MenuItem>
-
-                  {sizeChart.map((d, i) => (
-                    <MenuItem value={d.id} key={i}>
-                      {d.title}
-                    </MenuItem>
-                  ))}
-                </MainSelect>
-              )}
+        <SizeInput sizes={sizeChart} placeholder='Размер US' initialSelected={sizeValue} onSelect={setSizeValue}/>
       </MainInfoInputWrapper>
     );
   };
 
   const setSneakerDataFromAutoComplete = async (data) => {
-    const { brand, colorway, style_id, image_url, retail_price } = data;
+    const { brand_name, colorway, style_id, image_url, retail_price, sizes } = data;
     setSneakerData((data) => ({
       ...data,
-      brand,
+      brand: brand_name,
       colorway,
       style_id,
       image_url,
@@ -197,6 +158,8 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
       currency: 'RUB',
       name: itemName,
     }));
+    setSizeChart(sizes ? sizes : []);
+    // TODO: add sizes
   };
 
   const onAddItemClick = async () => {
@@ -359,7 +322,7 @@ export default AddSneakerModal;
 const MainWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.modalBackground};
   width: 1000px;
-  height: 740px;
+  height: 820px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -519,14 +482,6 @@ const TopTitleWrapper = styled.div`
 const TitleText = styled.span`
   font-size: 18px;
   color: ${({ theme }) => theme.colors.nonFocusedTextColor};
-`;
-
-const SizePlaceholder = styled.span`
-  // color: ${({ theme }) => theme.colors.textColor};
-  color: #8a8e98;
-  border-bottom: 2px solid #394974;
-  font-size: 1rem;
-  padding-bottom: 6px;
 `;
 
 const CloseIcon = styled(CloseIconInit)`

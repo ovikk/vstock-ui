@@ -84,17 +84,18 @@ const Inventory = () => {
       sell_source,
       comment,
       buy_source,
-      style_id
+      style_id,
     } = item;
-
+    
     const editSneakerData = {
       id,
       name: name || '',
       image_url: product.image_url,
       style_id: style_id,
       colorway: product.colorway || '',
-      brand: product.brand || '',
+      brand: product.brand_name || '',
       size_id: size_id || -1,
+      sizes: product.sizes, 
       buy_price: buy_price || '',
       sell_price: sell_price || '',
       currency: currency || currencies[0],
