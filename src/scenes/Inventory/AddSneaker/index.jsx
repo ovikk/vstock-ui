@@ -15,6 +15,7 @@ import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import { DatePicker } from '@material-ui/pickers';
+import InputMask from 'react-input-mask';
 import AutoComplete from 'scenes/Inventory/AddSneaker/AutoComplete';
 import { showSnackbar } from 'components/Snackbar/snackbarActions';
 import Spinner from 'components/Spinner';
@@ -22,6 +23,7 @@ import { currencies, isItemPublicSelections, sizes } from 'Util.js';
 
 import Camera from 'assets/camera.svg';
 import SneakerPlaceholder from 'assets/sneaker_placeholder.svg';
+
 
 const initSneakerData = {
   image_url: '',
@@ -71,7 +73,7 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
     }
   }, [sneakerData.style_id]);
 
-  const renderMainInput = (gridArea, title, dataKey, isNumber = false) => {
+  const renderMainInput = (gridArea, title, dataKey, isNumber = false, disabled = false) => {
     return (
       <MainInfoInputWrapper gridArea={gridArea}>
         <MainInfoInputTitle>{title}</MainInfoInputTitle>
@@ -84,6 +86,7 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
           }}
           placeholder={title}
           type={isNumber ? 'number' : 'text'}
+          disabled={disabled}
         />
       </MainInfoInputWrapper>
     );
@@ -133,12 +136,16 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
     return (
       <MainInfoInputWrapper gridArea={gridArea}>
         <MainInfoInputTitle>{title}</MainInfoInputTitle>
-        <CustomDatePicker
-          format="DD/MM/yyyy"
-          value={sneakerData[dataKey]}
+        <DateInput
+          value={(typeof sneakerData[dataKey] !== 'string') ? moment(sneakerData[dataKey]).format("DD/MM/YYYY") : sneakerData[dataKey]}
           onChange={(date) => {
             const newData = { ...sneakerData };
-            newData[dataKey] = date;
+            if (!date.target.value.includes("_")) {
+              newData[dataKey] = moment(date.target.value, "DD/MM/YYYY")
+            }
+            else {
+              newData[dataKey] = date.target.value;
+            }
             setSneakerData(newData);
           }}
         />
@@ -157,23 +164,23 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
         ) : sizeChart.length === 0 ? (
           <SizePlaceholder>Нет размерной сетки</SizePlaceholder>
         ) : (
-          <MainSelect
-            value={sizeValue}
-            onChange={(e) => {
-              setSizeValue(e.target.value);
-            }}
-          >
-            <MenuItem value={-1} disabled>
-              Выберите размер
+                <MainSelect
+                  value={sizeValue}
+                  onChange={(e) => {
+                    setSizeValue(e.target.value);
+                  }}
+                >
+                  <MenuItem value={-1} disabled>
+                    Выберите размер
             </MenuItem>
 
-            {sizeChart.map((d, i) => (
-              <MenuItem value={d.id} key={i}>
-                {d.title}
-              </MenuItem>
-            ))}
-          </MainSelect>
-        )}
+                  {sizeChart.map((d, i) => (
+                    <MenuItem value={d.id} key={i}>
+                      {d.title}
+                    </MenuItem>
+                  ))}
+                </MainSelect>
+              )}
       </MainInfoInputWrapper>
     );
   };
@@ -280,8 +287,8 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
             {sneakerData.image_url ? (
               <SneakerImage src={sneakerData.image_url} />
             ) : (
-              <SneakerImage src={SneakerPlaceholder} />
-            )}
+                <SneakerImage src={SneakerPlaceholder} />
+              )}
           </ImageWrapper>
 
           <AddPhotoWrapper>
@@ -300,14 +307,14 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
           </AddPhotoWrapper>
 
           <MainInfoInputsWrapper>
-            {renderMainInput('a', 'Артикул', 'style_id')}
-            {renderMainInput('b', 'Цвет', 'colorway')}
+            {renderMainInput('a', 'Артикул', 'style_id', false, true)}
+            {renderMainInput('b', 'Цвет', 'colorway', false, true)}
 
             {renderMainInput('c', 'Цена покупки', 'buy_price', true)}
             {renderMainSelect('d', 'Валюта', 'currency', ['RUB'])}
 
             {rednerSizeChart('e')}
-            {renderMainInput('f', 'Бренд', 'brand')}
+            {renderMainInput('f', 'Бренд', 'brand', false, true)}
             {renderDatePicker('g', 'Дата покупки', 'buy_date')}
 
             {renderCheckMark('h', 'Товар Продан', 'status')}
@@ -352,7 +359,7 @@ export default AddSneakerModal;
 const MainWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.modalBackground};
   width: 1000px;
-  height: 850px;
+  height: 740px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -476,6 +483,11 @@ const Input = styled.input`
     margin: 0;
   }
   -moz-appearance: textfield;
+
+  ::placeholder {
+    font-size: 1rem;
+    color: #8a8e98;
+  }
 `;
 
 const MainSelect = styled(Select)`
@@ -511,10 +523,10 @@ const TitleText = styled.span`
 
 const SizePlaceholder = styled.span`
   // color: ${({ theme }) => theme.colors.textColor};
-  color: #757575;
+  color: #8a8e98;
   border-bottom: 2px solid #394974;
+  font-size: 1rem;
   padding-bottom: 6px;
-  font-size: 18px;
 `;
 
 const CloseIcon = styled(CloseIconInit)`
@@ -544,3 +556,9 @@ const CustomDatePicker = styled(DatePicker)`
     color: ${({ theme }) => theme.colors.textColor};
   }
 `;
+
+const DateInput = (props) => (
+  <InputMask mask="99/99/9999" value={props.value} onChange={props.onChange} maskChar="_">
+    {(inputProps) => <Input {...inputProps} type="text" placeholder='ДД/ММ/ГГГГ' />}
+  </InputMask>
+)
