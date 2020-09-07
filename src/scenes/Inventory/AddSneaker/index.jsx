@@ -147,7 +147,7 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
   const rednerSizeChart = (gridArea) => {
     return (
       <MainInfoInputWrapper gridArea={gridArea}>
-        <SizeInput sizes={sizeChart} placeholder='Размер US' initialSelected={sizeValue} onSelect={setSizeValue}/>
+        <SizeInput sizes={sizeChart} placeholder='Размер US' initialSelected={sizeValue} onSelect={setSizeValue} />
       </MainInfoInputWrapper>
     );
   };
@@ -164,8 +164,15 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
       currency: 'RUB',
       name: itemName,
     }));
-    setSizeChart(sizes ? sizes : []);
-    // TODO: add sizes
+    setSizeChart(
+      sizes
+        ? [...sizes].sort((a, b) => {
+          if (a.us * 1 > b.us * 1) return 1;
+          if (a.us * 1 < b.us * 1) return -1;
+          return 0;
+        })
+        : []
+    );
   };
 
   const onAddItemClick = async () => {
@@ -227,8 +234,8 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
       imageList[pos] ? (
         <CustomSneakerImage src={imageList[pos].data_url} />
       ) : (
-        <CustomSneakerImagePlaceholder src={SneakerPlaceholder} />
-      );
+          <CustomSneakerImagePlaceholder src={SneakerPlaceholder} />
+        );
 
     return (
       <AddPhotoWrapper>
