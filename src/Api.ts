@@ -14,6 +14,7 @@ const getSneakersSuggestionsUrl = `${env.server}/api/v1/item/suggests`;
 const itemUrl = `${env.server}/api/v1/item`;
 const getMarketPricesUrl = `${env.server}/api/v1/item/price`;
 const getItemSizeChartUrl = `${env.server}/api/v1/item/sizechart`;
+const uploadImageUrl = `${env.server}/api/v1/item/images`;
 
 const getOwnDealersUrl = `${env.server}/api/v1/merchants/dealers`;
 const addDealerUrl = `${env.server}/api/v1/merchants/dealers/add`;
@@ -63,6 +64,14 @@ const put = (url: string, body: unknown) =>
     body: JSON.stringify(body),
     credentials: 'include',
   });
+
+const upload = (url: string, body: FormData) => {
+  apiFetch(url, {
+    method: 'post',
+    body,
+    credentials: 'include',
+  });
+};
 
 const login = (email: string, password: string) => {
   return post(loginUrl, { login: email, password });
@@ -156,6 +165,9 @@ const getStatsMonth = () => {
 const getStatsWeek = () => {
   return get(getStatsWeekUrl);
 };
+const uploadImages = (body: FormData) => {
+  return upload(uploadImageUrl, body);
+};
 
 const api = {
   login,
@@ -182,6 +194,7 @@ const api = {
   getStatsYear,
   getStatsMonth,
   getStatsWeek,
+  uploadImages,
 };
 
 export default api;

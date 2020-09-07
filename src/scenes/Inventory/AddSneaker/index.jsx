@@ -51,6 +51,9 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
   const [sizeChart, setSizeChart] = useState(undefined);
   const [sizeChartLoading, setSizeChartLoading] = useState(false);
   const [images, setImages] = React.useState([]);
+
+  console.log(images);
+
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
     console.log(imageList, addUpdateIndex);
@@ -171,7 +174,6 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
             <MenuItem value={-1} disabled>
               Выберите размер
             </MenuItem>
-
             {sizeChart.map((d, i) => (
               <MenuItem value={d.id} key={i}>
                 {d.title}
@@ -251,10 +253,15 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
     }
   };
 
-  const renderCustomImages = (imageList, onImageUpload) => {
+  const renderCustomImages = (imageList, onImageUpload, onImageDelete) => {
     const renderImageFromImageList = (pos) =>
       imageList[pos] ? (
-        <CustomSneakerImage src={imageList[pos].data_url} />
+        <>
+          <CustomSneakerImage src={imageList[pos].data_url} />
+          <DeleteCustomImage onClick={() => onImageDelete()}>
+            <RemoveImageIcon />
+          </DeleteCustomImage>
+        </>
       ) : (
         <CustomSneakerImagePlaceholder src={SneakerPlaceholder} />
       );
@@ -351,7 +358,7 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
               //   ))}
               // </div>
 
-              renderCustomImages(imageList, onImageUpload)
+              renderCustomImages(imageList, onImageUpload, onImageRemove)
             }
           </ImageUploading>
 
@@ -442,6 +449,16 @@ const AddPhotoWrapper = styled.div`
   margin: 0px 20px;
   display: flex;
   flex-direction: column;
+  position: relative;
+`;
+
+const DeleteCustomImage = styled.div`
+  cursor: pointer;
+  position: absolute;
+  height: 25px;
+  width: 25px;
+  top: 0;
+  right: 0;
 `;
 
 const CustomImageWrapper = styled.div`
@@ -582,6 +599,12 @@ const SizePlaceholder = styled.span`
 const CloseIcon = styled(CloseIconInit)`
   && {
     color: ${({ theme }) => theme.colors.nonFocusedTextColor};
+  }
+`;
+
+const RemoveImageIcon = styled(CloseIconInit)`
+  && {
+    color: ${({ theme }) => theme.colors.textColor};
   }
 `;
 
