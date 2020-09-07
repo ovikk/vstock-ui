@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Api from 'Api';
 import moment from 'moment';
+import ImageUploading from 'react-images-uploading';
 import {
   fetchOwnInventoryItems,
   fetchOwnSoldInventoryItems,
@@ -19,8 +20,7 @@ import InputMask from 'react-input-mask';
 import AutoComplete from 'scenes/Inventory/AddSneaker/AutoComplete';
 import { showSnackbar } from 'components/Snackbar/snackbarActions';
 import Spinner from 'components/Spinner';
-import { currencies, isItemPublicSelections, sizes } from 'Util.js';
-
+import { currencies, isItemPublicSelections } from 'Util.js';
 import Camera from 'assets/camera.svg';
 import SneakerPlaceholder from 'assets/sneaker_placeholder.svg';
 import { SizeInput } from './SizeInput';
@@ -51,8 +51,14 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
   const [sizeValue, setSizeValue] = useState(
     isEdit ? editSneakerData.size_id : -1
   );
-
-  const [sizeChart, setSizeChart] = useState(isEdit ? editSneakerData.sizes : undefined);
+  const [sizeChart, setSizeChart] = useState(undefined);
+  const [sizeChartLoading, setSizeChartLoading] = useState(false);
+  const [images, setImages] = React.useState([]);
+  const onChange = (imageList, addUpdateIndex) => {
+    // data for submit
+    console.log(imageList, addUpdateIndex);
+    setImages(imageList);
+  };
 
   const { ownInventoryId } = useSelector((state) => state.inventory);
   const dispatch = useDispatch();
@@ -216,6 +222,26 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
     }
   };
 
+  const renderCustomImages = (imageList, onImageUpload) => {
+    const renderImageFromImageList = (pos) =>
+      imageList[pos] ? (
+        <CustomSneakerImage src={imageList[pos].data_url} />
+      ) : (
+        <CustomSneakerImagePlaceholder src={SneakerPlaceholder} />
+      );
+
+    return (
+      <AddPhotoWrapper>
+        <CustomImageWrapper>{renderImageFromImageList(0)}</CustomImageWrapper>
+        <CustomImageWrapper>{renderImageFromImageList(1)}</CustomImageWrapper>
+        <CustomImageWrapper>{renderImageFromImageList(2)}</CustomImageWrapper>
+        <CameraWrapper onClick={onImageUpload}>
+          <CameraIcon src={Camera} />
+        </CameraWrapper>
+      </AddPhotoWrapper>
+    );
+  };
+
   return (
     <Dialog
       onClose={onClose}
@@ -254,20 +280,51 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
               )}
           </ImageWrapper>
 
-          <AddPhotoWrapper>
-            <CustomImageWrapper>
-              <CustomSneakerImagePlaceholder src={SneakerPlaceholder} />
-            </CustomImageWrapper>
-            <CustomImageWrapper>
-              <CustomSneakerImagePlaceholder src={SneakerPlaceholder} />
-            </CustomImageWrapper>
-            <CustomImageWrapper>
-              <CustomSneakerImagePlaceholder src={SneakerPlaceholder} />
-            </CustomImageWrapper>
-            <CameraWrapper>
-              <CameraIcon src={Camera} />
-            </CameraWrapper>
-          </AddPhotoWrapper>
+          <ImageUploading
+            multiple
+            value={images}
+            onChange={onChange}
+            maxNumber={3}
+            dataURLKey="data_url"
+          >
+            {({
+              imageList,
+              onImageUpload,
+              onImageRemoveAll,
+              onImageUpdate,
+              onImageRemove,
+              isDragging,
+              dragProps,
+            }) =>
+              // write your building UI
+              // <div className="upload__image-wrapper">
+              //   <button
+              //     style={isDragging ? { color: 'red' } : null}
+              //     onClick={onImageUpload}
+              //     {...dragProps}
+              //   >
+              //     Click or Drop here
+              //   </button>
+              //   &nbsp;
+              //   <button onClick={onImageRemoveAll}>Remove all images</button>
+              //   {imageList.map((image, index) => (
+              //     <div key={index} className="image-item">
+              //       <img src={image.data_url} alt="" width="100" />
+              //       <div className="image-item__btn-wrapper">
+              //         <button onClick={() => onImageUpdate(index)}>
+              //           Update
+              //         </button>
+              //         <button onClick={() => onImageRemove(index)}>
+              //           Remove
+              //         </button>
+              //       </div>
+              //     </div>
+              //   ))}
+              // </div>
+
+              renderCustomImages(imageList, onImageUpload)
+            }
+          </ImageUploading>
 
           <MainInfoInputsWrapper>
             {renderMainInput('a', 'Артикул', 'style_id', false, true)}
@@ -336,8 +393,8 @@ const MainInfoWrapper = styled.div`
 
 const ImageWrapper = styled.div`
   width: 400px;
-  height: 350px;
-  background-color: ${({ theme }) => theme.colors.secondaryColor};
+  height: 390px;
+  background-color: ${({ theme }) => theme.colors.darkBackground};
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -351,7 +408,7 @@ const SneakerImage = styled.img`
 `;
 
 const AddPhotoWrapper = styled.div`
-  height: 350px;
+  height: 390px;
   width: 100px;
   margin: 0px 20px;
   display: flex;
@@ -359,25 +416,31 @@ const AddPhotoWrapper = styled.div`
 `;
 
 const CustomImageWrapper = styled.div`
-  flex: 1;
-  margin: 5px 0px;
+  height: 100px;
+  margin-bottom: 10px;
   width: 100%;
   border-radius: 6px;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${({ theme }) => theme.colors.secondaryColor};
+  background-color: ${({ theme }) => theme.colors.darkBackground};
+  position: relative;
 `;
 
 const CustomSneakerImagePlaceholder = styled.img`
   height: auto;
-  width: 80%;
+  width: 100%;
   transform: rotate(30deg);
 `;
 
+const CustomSneakerImage = styled.img`
+  height: 90%;
+  width: auto;
+  max-width: 90%;
+`;
+
 const CameraWrapper = styled.div`
-  flex: 1;
-  margin: 5px 0px;
+  height: 100px;
   width: 100%;
   border-radius: 6px;
   display: flex;
@@ -388,7 +451,7 @@ const CameraWrapper = styled.div`
 
 const CameraIcon = styled.img`
   height: auto;
-  width: 50%;
+  width: 60%;
 `;
 
 const MainInfoInputsWrapper = styled.div`
