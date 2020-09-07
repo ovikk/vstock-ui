@@ -185,4 +185,5 @@ const AutoCompleteSuggestions = styled.div`
   left: 0px;
   width: 400px;
   background-color: #afafaf;
+  z-index: 10;
 `;
