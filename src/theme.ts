@@ -4,6 +4,7 @@ export default {
     secondaryBackground: '#394974',
     lightBackground: '#151D31',
     lighterBackground: '#6578A9',
+    darkBackground: '#1D263F',
     hoverColor: '#0B172A',
     nonFocusedTextColor: '#8A8E98',
     textColor: '#FFFFFF',
