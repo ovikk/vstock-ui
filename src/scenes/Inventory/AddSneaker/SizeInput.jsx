@@ -27,14 +27,13 @@ function SizeInput({ sizes, placeholder, onSelect, initialSelected }) {
       {showSuggestions && value &&
         <SuggestionsWrapper>
           {sizes.length > 0 && sizes
-              .filter(size => size.title.includes(value))
+              .filter(size => size.us.startsWith(value))
               .slice(0, 2)
               .map(size => (
                 <Button key={size.id} onClick={() => {
                   setSelected(size.id)
                   onSelect(size.id)
                   setShowSuggestions(false)
-                  console.log('setSelected', size.id)
                 }}>{size.title}</Button>
               ))
           }

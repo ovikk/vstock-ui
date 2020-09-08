@@ -85,6 +85,7 @@ const Inventory = () => {
       comment,
       buy_source,
       style_id,
+      gallery,
     } = item;
     
     const editSneakerData = {
@@ -105,6 +106,7 @@ const Inventory = () => {
       sell_date,
       comment,
       buy_source,
+      gallery,
       is_item_public:
         is_item_public !== undefined && is_item_public !== null
           ? is_item_public

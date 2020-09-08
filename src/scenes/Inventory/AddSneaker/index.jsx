@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Api from 'Api';
 import moment from 'moment';
-import ImageUploading from 'react-images-uploading';
 import {
   fetchOwnInventoryItems,
   fetchOwnSoldInventoryItems,
@@ -19,12 +18,10 @@ import { DatePicker } from '@material-ui/pickers';
 import InputMask from 'react-input-mask';
 import AutoComplete from 'scenes/Inventory/AddSneaker/AutoComplete';
 import { showSnackbar } from 'components/Snackbar/snackbarActions';
-import Spinner from 'components/Spinner';
 import { currencies, isItemPublicSelections } from 'Util.js';
-import Camera from 'assets/camera.svg';
 import SneakerPlaceholder from 'assets/sneaker_placeholder.svg';
 import { SizeInput } from './SizeInput';
-
+import { ImagesForm } from './ImagesForm';
 
 const initSneakerData = {
   image_url: '',
@@ -43,26 +40,23 @@ const initSneakerData = {
   buy_source: '',
 };
 
+const sortSizes = (sizes) => [...sizes].sort((a, b) => {
+  if (a.us * 1 > b.us * 1) return 1;
+  if (a.us * 1 < b.us * 1) return -1;
+  return 0;
+})
+
 const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
   const [sneakerData, setSneakerData] = useState(
     isEdit ? { ...editSneakerData, buy_date: moment(editSneakerData.buy_date) } : { ...initSneakerData }
   );
   const [itemName, setItemName] = useState(isEdit ? editSneakerData.name : '');
-  const [sizeValue, setSizeValue] = useState(
-    isEdit ? editSneakerData.size_id : -1
-  );
-  const [sizeChart, setSizeChart] = useState(undefined);
-  const [sizeChartLoading, setSizeChartLoading] = useState(false);
-  const [images, setImages] = React.useState([]);
-  const onChange = (imageList, addUpdateIndex) => {
-    // data for submit
-    console.log(imageList, addUpdateIndex);
-    setImages(imageList);
-  };
+  const [sizeValue, setSizeValue] = useState(isEdit ? editSneakerData.size_id : -1);
+  const [sizeChart, setSizeChart] = useState(isEdit ? sortSizes(editSneakerData.sizes) : undefined);
+  const [images, setImages] = React.useState(isEdit ? [...editSneakerData.gallery] : []);
 
   const { ownInventoryId } = useSelector((state) => state.inventory);
   const dispatch = useDispatch();
-
 
   const renderMainInput = (gridArea, title, dataKey, isNumber = false, disabled = false) => {
     return (
@@ -164,15 +158,7 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
       currency: 'RUB',
       name: itemName,
     }));
-    setSizeChart(
-      sizes
-        ? [...sizes].sort((a, b) => {
-          if (a.us * 1 > b.us * 1) return 1;
-          if (a.us * 1 < b.us * 1) return -1;
-          return 0;
-        })
-        : []
-    );
+    setSizeChart(sizes ? sortSizes(sizes) : []);
   };
 
   const onAddItemClick = async () => {
@@ -189,9 +175,67 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
       sell_source,
       buy_source,
       comment,
+      gallery: oldGallery
     } = sneakerData;
 
     console.log({ sizeChart, sizeValue });
+
+    for (let i = 0; i < (oldGallery || []).length; i++) {
+      const image = oldGallery[i];
+      let wasDeleted = true;
+      for (let j = 0; j < images.length && wasDeleted; j++) {
+        const newImage = images[j];
+        if (image.id === newImage.id) {
+          wasDeleted = false;
+        }
+      }
+
+      if (wasDeleted) {
+        // TODO: вынести в отдельный файл апи
+        fetch('https://api.trackstock.io/api/v1/item/images/delete', {
+          method: 'POST',
+          body: JSON.stringify({
+            "id": sneakerData.id,
+            "gallery": [
+              {
+                "id": image.id
+              }
+            ]
+          }),
+          credentials: 'include',
+        });
+      }
+    }
+
+    const formData = new FormData();
+    let hasNewFiles = false;
+
+    for (let i = 0; i < images.length; ++i) {
+      if (!images[i].id) {
+        formData.append('images', images[i].file);
+        hasNewFiles = true;
+      }
+    }
+
+    let tempGallery = [];
+    if (hasNewFiles) {
+      // TODO: вынести в отдельный файл апи
+      const response = await fetch('https://api.trackstock.io/api/v1/item/images', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+      const data = await response.json();
+      if (data.data) { tempGallery = data.data; }
+    }
+    const newGallery = [];
+    let tempGalleryIndex = 0;
+    for (let i = 0; i < images.length; i++) {
+      const image = images[i];
+      if (!!image.id) { newGallery.push(image); }
+      else { newGallery.push(tempGallery[tempGalleryIndex++]); }
+    }
+
 
     const data = {
       inventory_id: ownInventoryId,
@@ -210,6 +254,7 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
       sell_source,
       buy_source,
       comment,
+      gallery: newGallery,
     };
 
     let response;
@@ -227,26 +272,6 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
       dispatch(showSnackbar(isEdit ? 'Предмет обновлен' : 'Предмет добавлен'));
       onClose();
     }
-  };
-
-  const renderCustomImages = (imageList, onImageUpload) => {
-    const renderImageFromImageList = (pos) =>
-      imageList[pos] ? (
-        <CustomSneakerImage src={imageList[pos].data_url} />
-      ) : (
-          <CustomSneakerImagePlaceholder src={SneakerPlaceholder} />
-        );
-
-    return (
-      <AddPhotoWrapper>
-        <CustomImageWrapper>{renderImageFromImageList(0)}</CustomImageWrapper>
-        <CustomImageWrapper>{renderImageFromImageList(1)}</CustomImageWrapper>
-        <CustomImageWrapper>{renderImageFromImageList(2)}</CustomImageWrapper>
-        <CameraWrapper onClick={onImageUpload}>
-          <CameraIcon src={Camera} />
-        </CameraWrapper>
-      </AddPhotoWrapper>
-    );
   };
 
   return (
@@ -287,51 +312,7 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
               )}
           </ImageWrapper>
 
-          <ImageUploading
-            multiple
-            value={images}
-            onChange={onChange}
-            maxNumber={3}
-            dataURLKey="data_url"
-          >
-            {({
-              imageList,
-              onImageUpload,
-              onImageRemoveAll,
-              onImageUpdate,
-              onImageRemove,
-              isDragging,
-              dragProps,
-            }) =>
-              // write your building UI
-              // <div className="upload__image-wrapper">
-              //   <button
-              //     style={isDragging ? { color: 'red' } : null}
-              //     onClick={onImageUpload}
-              //     {...dragProps}
-              //   >
-              //     Click or Drop here
-              //   </button>
-              //   &nbsp;
-              //   <button onClick={onImageRemoveAll}>Remove all images</button>
-              //   {imageList.map((image, index) => (
-              //     <div key={index} className="image-item">
-              //       <img src={image.data_url} alt="" width="100" />
-              //       <div className="image-item__btn-wrapper">
-              //         <button onClick={() => onImageUpdate(index)}>
-              //           Update
-              //         </button>
-              //         <button onClick={() => onImageRemove(index)}>
-              //           Remove
-              //         </button>
-              //       </div>
-              //     </div>
-              //   ))}
-              // </div>
-
-              renderCustomImages(imageList, onImageUpload)
-            }
-          </ImageUploading>
+          <ImagesForm values={images || []} onChange={setImages} />
 
           <MainInfoInputsWrapper>
             {renderMainInput('a', 'Артикул', 'style_id', false, true)}
