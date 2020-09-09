@@ -55,8 +55,8 @@ const Sneaker = ({ item, onEditClick, onSellClick }) => {
   const dispatch = useDispatch();
 
   const renderCurrency = (currency) => {
-    if (currency === 'USD') return '$';
-    return '₽';
+    if (currency === 'USD') return ' $';
+    return ' ₽';
   };
 
   const onEditIconClick = () => {

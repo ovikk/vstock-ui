@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Api from 'Api';
 import moment from 'moment';
-import ImageUploading from 'react-images-uploading';
 import {
   fetchOwnInventoryItems,
   fetchOwnSoldInventoryItems,
@@ -16,12 +15,13 @@ import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import { DatePicker } from '@material-ui/pickers';
+import InputMask from 'react-input-mask';
 import AutoComplete from 'scenes/Inventory/AddSneaker/AutoComplete';
 import { showSnackbar } from 'components/Snackbar/snackbarActions';
-import Spinner from 'components/Spinner';
 import { currencies, isItemPublicSelections } from 'Util.js';
-import Camera from 'assets/camera.svg';
 import SneakerPlaceholder from 'assets/sneaker_placeholder.svg';
+import { SizeInput } from './SizeInput';
+import { ImagesForm } from './ImagesForm';
 
 const initSneakerData = {
   image_url: '',
@@ -40,46 +40,25 @@ const initSneakerData = {
   buy_source: '',
 };
 
+const sortSizes = (sizes) => [...sizes].sort((a, b) => {
+  if (a.us * 1 > b.us * 1) return 1;
+  if (a.us * 1 < b.us * 1) return -1;
+  return 0;
+})
+
 const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
   const [sneakerData, setSneakerData] = useState(
-    isEdit ? { ...editSneakerData } : { ...initSneakerData }
+    isEdit ? { ...editSneakerData, buy_date: moment(editSneakerData.buy_date) } : { ...initSneakerData }
   );
   const [itemName, setItemName] = useState(isEdit ? editSneakerData.name : '');
-  const [sizeValue, setSizeValue] = useState(
-    isEdit ? editSneakerData.size_id : -1
-  );
-  const [sizeChart, setSizeChart] = useState(undefined);
-  const [sizeChartLoading, setSizeChartLoading] = useState(false);
-  const [images, setImages] = React.useState([]);
-
-  console.log(images);
-
-  const onChange = (imageList, addUpdateIndex) => {
-    // data for submit
-    console.log(imageList, addUpdateIndex);
-    setImages(imageList);
-  };
+  const [sizeValue, setSizeValue] = useState(isEdit ? editSneakerData.size_id : -1);
+  const [sizeChart, setSizeChart] = useState(isEdit ? sortSizes(editSneakerData.sizes) : undefined);
+  const [images, setImages] = React.useState(isEdit ? [...editSneakerData.gallery] : []);
 
   const { ownInventoryId } = useSelector((state) => state.inventory);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (sneakerData.style_id) {
-      const getCharts = async () => {
-        setSizeChartLoading(true);
-        const request = await Api.getItemSizeChartByStyleId(
-          sneakerData.style_id
-        );
-        if (!request.error) {
-          setSizeChart(request.data ? request.data : []);
-        }
-        setSizeChartLoading(false);
-      };
-      getCharts();
-    }
-  }, [sneakerData.style_id]);
-
-  const renderMainInput = (gridArea, title, dataKey, isNumber = false) => {
+  const renderMainInput = (gridArea, title, dataKey, isNumber = false, disabled = false) => {
     return (
       <MainInfoInputWrapper gridArea={gridArea}>
         <MainInfoInputTitle>{title}</MainInfoInputTitle>
@@ -92,6 +71,7 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
           }}
           placeholder={title}
           type={isNumber ? 'number' : 'text'}
+          disabled={disabled}
         />
       </MainInfoInputWrapper>
     );
@@ -141,12 +121,16 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
     return (
       <MainInfoInputWrapper gridArea={gridArea}>
         <MainInfoInputTitle>{title}</MainInfoInputTitle>
-        <CustomDatePicker
-          format="DD/MM/yyyy"
-          value={sneakerData[dataKey]}
+        <DateInput
+          value={(typeof sneakerData[dataKey] !== 'string') ? moment(sneakerData[dataKey]).format("DD/MM/YYYY") : sneakerData[dataKey]}
           onChange={(date) => {
             const newData = { ...sneakerData };
-            newData[dataKey] = date;
+            if (!date.target.value.includes("_")) {
+              newData[dataKey] = moment(date.target.value, "DD/MM/YYYY")
+            }
+            else {
+              newData[dataKey] = date.target.value;
+            }
             setSneakerData(newData);
           }}
         />
@@ -157,39 +141,16 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
   const rednerSizeChart = (gridArea) => {
     return (
       <MainInfoInputWrapper gridArea={gridArea}>
-        <MainInfoInputTitle>Размер</MainInfoInputTitle>
-        {sizeChartLoading ? (
-          <Spinner size={25} />
-        ) : sizeChart === undefined ? (
-          <SizePlaceholder>Размер US</SizePlaceholder>
-        ) : sizeChart.length === 0 ? (
-          <SizePlaceholder>Нет размерной сетки</SizePlaceholder>
-        ) : (
-          <MainSelect
-            value={sizeValue}
-            onChange={(e) => {
-              setSizeValue(e.target.value);
-            }}
-          >
-            <MenuItem value={-1} disabled>
-              Выберите размер
-            </MenuItem>
-            {sizeChart.map((d, i) => (
-              <MenuItem value={d.id} key={i}>
-                {d.title}
-              </MenuItem>
-            ))}
-          </MainSelect>
-        )}
+        <SizeInput sizes={sizeChart} placeholder='Размер US' initialSelected={sizeValue} onSelect={setSizeValue} />
       </MainInfoInputWrapper>
     );
   };
 
   const setSneakerDataFromAutoComplete = async (data) => {
-    const { brand, colorway, style_id, image_url, retail_price } = data;
+    const { brand_name, colorway, style_id, image_url, retail_price, sizes } = data;
     setSneakerData((data) => ({
       ...data,
-      brand,
+      brand: brand_name,
       colorway,
       style_id,
       image_url,
@@ -197,6 +158,7 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
       currency: 'RUB',
       name: itemName,
     }));
+    setSizeChart(sizes ? sortSizes(sizes) : []);
   };
 
   const onAddItemClick = async () => {
@@ -213,9 +175,67 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
       sell_source,
       buy_source,
       comment,
+      gallery: oldGallery
     } = sneakerData;
 
     console.log({ sizeChart, sizeValue });
+
+    for (let i = 0; i < (oldGallery || []).length; i++) {
+      const image = oldGallery[i];
+      let wasDeleted = true;
+      for (let j = 0; j < images.length && wasDeleted; j++) {
+        const newImage = images[j];
+        if (image.id === newImage.id) {
+          wasDeleted = false;
+        }
+      }
+
+      if (wasDeleted) {
+        // TODO: вынести в отдельный файл апи
+        fetch('https://api.trackstock.io/api/v1/item/images/delete', {
+          method: 'POST',
+          body: JSON.stringify({
+            "id": sneakerData.id,
+            "gallery": [
+              {
+                "id": image.id
+              }
+            ]
+          }),
+          credentials: 'include',
+        });
+      }
+    }
+
+    const formData = new FormData();
+    let hasNewFiles = false;
+
+    for (let i = 0; i < images.length; ++i) {
+      if (!images[i].id) {
+        formData.append('images', images[i].file);
+        hasNewFiles = true;
+      }
+    }
+
+    let tempGallery = [];
+    if (hasNewFiles) {
+      // TODO: вынести в отдельный файл апи
+      const response = await fetch('https://api.trackstock.io/api/v1/item/images', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+      const data = await response.json();
+      if (data.data) { tempGallery = data.data; }
+    }
+    const newGallery = [];
+    let tempGalleryIndex = 0;
+    for (let i = 0; i < images.length; i++) {
+      const image = images[i];
+      if (!!image.id) { newGallery.push(image); }
+      else { newGallery.push(tempGallery[tempGalleryIndex++]); }
+    }
+
 
     const data = {
       inventory_id: ownInventoryId,
@@ -234,6 +254,7 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
       sell_source,
       buy_source,
       comment,
+      gallery: newGallery,
     };
 
     let response;
@@ -251,31 +272,6 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
       dispatch(showSnackbar(isEdit ? 'Предмет обновлен' : 'Предмет добавлен'));
       onClose();
     }
-  };
-
-  const renderCustomImages = (imageList, onImageUpload, onImageDelete) => {
-    const renderImageFromImageList = (pos) =>
-      imageList[pos] ? (
-        <>
-          <CustomSneakerImage src={imageList[pos].data_url} />
-          <DeleteCustomImage onClick={() => onImageDelete()}>
-            <RemoveImageIcon />
-          </DeleteCustomImage>
-        </>
-      ) : (
-        <CustomSneakerImagePlaceholder src={SneakerPlaceholder} />
-      );
-
-    return (
-      <AddPhotoWrapper>
-        <CustomImageWrapper>{renderImageFromImageList(0)}</CustomImageWrapper>
-        <CustomImageWrapper>{renderImageFromImageList(1)}</CustomImageWrapper>
-        <CustomImageWrapper>{renderImageFromImageList(2)}</CustomImageWrapper>
-        <CameraWrapper onClick={onImageUpload}>
-          <CameraIcon src={Camera} />
-        </CameraWrapper>
-      </AddPhotoWrapper>
-    );
   };
 
   return (
@@ -312,65 +308,21 @@ const AddSneakerModal = ({ onClose, isEdit, editSneakerData }) => {
             {sneakerData.image_url ? (
               <SneakerImage src={sneakerData.image_url} />
             ) : (
-              <SneakerImage src={SneakerPlaceholder} />
-            )}
+                <SneakerImage src={SneakerPlaceholder} />
+              )}
           </ImageWrapper>
 
-          <ImageUploading
-            multiple
-            value={images}
-            onChange={onChange}
-            maxNumber={3}
-            dataURLKey="data_url"
-          >
-            {({
-              imageList,
-              onImageUpload,
-              onImageRemoveAll,
-              onImageUpdate,
-              onImageRemove,
-              isDragging,
-              dragProps,
-            }) =>
-              // write your building UI
-              // <div className="upload__image-wrapper">
-              //   <button
-              //     style={isDragging ? { color: 'red' } : null}
-              //     onClick={onImageUpload}
-              //     {...dragProps}
-              //   >
-              //     Click or Drop here
-              //   </button>
-              //   &nbsp;
-              //   <button onClick={onImageRemoveAll}>Remove all images</button>
-              //   {imageList.map((image, index) => (
-              //     <div key={index} className="image-item">
-              //       <img src={image.data_url} alt="" width="100" />
-              //       <div className="image-item__btn-wrapper">
-              //         <button onClick={() => onImageUpdate(index)}>
-              //           Update
-              //         </button>
-              //         <button onClick={() => onImageRemove(index)}>
-              //           Remove
-              //         </button>
-              //       </div>
-              //     </div>
-              //   ))}
-              // </div>
-
-              renderCustomImages(imageList, onImageUpload, onImageRemove)
-            }
-          </ImageUploading>
+          <ImagesForm values={images || []} onChange={setImages} />
 
           <MainInfoInputsWrapper>
-            {renderMainInput('a', 'Артикул', 'style_id')}
-            {renderMainInput('b', 'Цвет', 'colorway')}
+            {renderMainInput('a', 'Артикул', 'style_id', false, true)}
+            {renderMainInput('b', 'Цвет', 'colorway', false, true)}
 
             {renderMainInput('c', 'Цена покупки', 'buy_price', true)}
             {renderMainSelect('d', 'Валюта', 'currency', ['RUB'])}
 
             {rednerSizeChart('e')}
-            {renderMainInput('f', 'Бренд', 'brand')}
+            {renderMainInput('f', 'Бренд', 'brand', false, true)}
             {renderDatePicker('g', 'Дата покупки', 'buy_date')}
 
             {renderCheckMark('h', 'Товар Продан', 'status')}
@@ -415,7 +367,7 @@ export default AddSneakerModal;
 const MainWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.modalBackground};
   width: 1000px;
-  height: 850px;
+  height: 820px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -555,6 +507,11 @@ const Input = styled.input`
     margin: 0;
   }
   -moz-appearance: textfield;
+
+  ::placeholder {
+    font-size: 1rem;
+    color: #8a8e98;
+  }
 `;
 
 const MainSelect = styled(Select)`
@@ -586,14 +543,6 @@ const TopTitleWrapper = styled.div`
 const TitleText = styled.span`
   font-size: 18px;
   color: ${({ theme }) => theme.colors.nonFocusedTextColor};
-`;
-
-const SizePlaceholder = styled.span`
-  // color: ${({ theme }) => theme.colors.textColor};
-  color: #757575;
-  border-bottom: 2px solid #394974;
-  padding-bottom: 6px;
-  font-size: 18px;
 `;
 
 const CloseIcon = styled(CloseIconInit)`
@@ -629,3 +578,9 @@ const CustomDatePicker = styled(DatePicker)`
     color: ${({ theme }) => theme.colors.textColor};
   }
 `;
+
+const DateInput = (props) => (
+  <InputMask mask="99/99/9999" value={props.value} onChange={props.onChange} maskChar="_">
+    {(inputProps) => <Input {...inputProps} type="text" placeholder='ДД/ММ/ГГГГ' />}
+  </InputMask>
+)

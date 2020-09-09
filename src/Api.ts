@@ -10,7 +10,9 @@ const getSoldInventoryUrl = `${env.server}/api/v1/inventory/sold/`;
 const getOwnInventoryUrl = `${env.server}/api/v1/inventory`;
 const getDealersInventoryUrl = `${env.server}/api/v1/inventory/trusted/`;
 
-const getSneakersSuggestionsUrl = `${env.server}/api/v1/item/suggests`;
+// const getSneakersSuggestionsUrl = `${env.server}/api/v1/item/suggests`;
+const getSneakersSuggestionsUrl = `${env.server}/api/v1/products/suggests`;
+
 const itemUrl = `${env.server}/api/v1/item`;
 const getMarketPricesUrl = `${env.server}/api/v1/item/price`;
 const getItemSizeChartUrl = `${env.server}/api/v1/item/sizechart`;

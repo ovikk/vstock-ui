@@ -3,6 +3,8 @@ import styled from 'styled-components';
 
 import _ from 'lodash';
 
+const minQueryLength = 3;
+
 const AutoComplete = ({
   getFunction,
   returnFunction,
@@ -49,11 +51,11 @@ const AutoComplete = ({
     if (isRendered.current) {
       if (showSuggestionsFlag) {
         setIsItemSelected(false);
-        if (inputValue.length < 4) {
+        if (inputValue.length < minQueryLength) {
           setSuggestions([]);
         }
 
-        if (inputValue.length > 4) {
+        if (inputValue.length >= minQueryLength) {
           debounceOnChange(inputValue);
         }
       } else {
@@ -84,11 +86,11 @@ const AutoComplete = ({
   }, [selectedIndex, suggestions.length]);
 
   const onInputChange = async (value) => {
-    if (value.length > 4) {
+    if (value.length >= minQueryLength) {
       const response = await getFunction(value);
 
       if (!response.error) {
-        setSuggestions(response.data);
+        setSuggestions(response.data.map(x => x._source));
       }
     }
   };
@@ -107,7 +109,7 @@ const AutoComplete = ({
       />
 
       {suggestions.length > 0 &&
-        inputValue.length > 4 &&
+        inputValue.length >= minQueryLength &&
         !isItemSelected &&
         showSuggestionsFlag && (
           <AutoCompleteSuggestions>
@@ -185,5 +187,5 @@ const AutoCompleteSuggestions = styled.div`
   left: 0px;
   width: 400px;
   background-color: #afafaf;
-  z-index: 10;
+  z-index: 1;
 `;
