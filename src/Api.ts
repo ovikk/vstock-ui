@@ -5,6 +5,10 @@ const registrateUrl = `${env.server}/api/v1/signin`;
 const logoutUrl = `${env.server}/api/v1/logout`;
 const authUrl = `${env.server}/api/v1/auth`;
 
+const userDataUrl = `${env.server}/api/v1/user`;
+const outOfStockLoginUrl = `${env.server}/api/v1/markets/oos/login`;
+const outOfStockLogoutUrl = `${env.server}/api/v1/markets/oos/logout`;
+
 const getInventoryByIdUrl = `${env.server}/api/v1/inventory`;
 const getSoldInventoryUrl = `${env.server}/api/v1/inventory/sold/`;
 const getOwnInventoryUrl = `${env.server}/api/v1/inventory`;
@@ -78,17 +82,26 @@ const upload = (url: string, body: FormData) => {
 const login = (email: string, password: string) => {
   return post(loginUrl, { login: email, password });
 };
-
 const registrate = (email: string, password: string) => {
   return post(registrateUrl, { login: email, password });
 };
-
 const logout = () => {
   return post(logoutUrl, {});
 };
-
 const auth = () => {
   return get(authUrl);
+};
+
+const getUserData = () => {
+  return get(userDataUrl);
+};
+
+const authOutOfStock = (email: string, password: string) => {
+  return post(outOfStockLoginUrl, { login: email, password });
+};
+
+const logoutOutOfStock = () => {
+  return post(outOfStockLogoutUrl, {});
 };
 
 const getInventoryById = (id: string | number) => {
@@ -134,23 +147,18 @@ const getItemPrice = (itemId: number) => {
 const getOwnDealers = () => {
   return get(getOwnDealersUrl);
 };
-
 const addDealer = (dealer: string) => {
   return get(`${addDealerUrl}/${dealer}`);
 };
-
 const deleteDealer = (dealerId: number) => {
   return _delete(getOwnDealersUrl + `/${dealerId}`);
 };
-
 const getOwnBuyers = () => {
   return get(getOwnBuyersUrl);
 };
-
 const getDealersInventory = () => {
   return get(getDealersInventoryUrl);
 };
-
 const getInviteLink = () => {
   return get(getInviteLinkUrl);
 };
@@ -167,6 +175,7 @@ const getStatsMonth = () => {
 const getStatsWeek = () => {
   return get(getStatsWeekUrl);
 };
+
 const uploadImages = (body: FormData) => {
   return upload(uploadImageUrl, body);
 };
@@ -197,6 +206,9 @@ const api = {
   getStatsMonth,
   getStatsWeek,
   uploadImages,
+  getUserData,
+  authOutOfStock,
+  logoutOutOfStock
 };
 
 export default api;
