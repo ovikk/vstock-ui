@@ -6,17 +6,20 @@ import theme from 'theme';
 import Swither from 'components/Switcher';
 import SearchInput from 'components/SearchInput';
 import ListWithShadows from 'components/ListWithShadows';
+import { showSnackbar } from 'components/Snackbar/snackbarActions';
+import { SneakersList } from 'components/SneakersList';
 
-import Sneaker from './Sneaker';
 import AddSneakerModal from './AddSneaker';
 import SellSneakerModal from './SellSneakerModal';
 
 import { useLocation, useHistory } from 'react-router-dom';
 
+import Api from 'Api';
 import {
   fetchOwnInventoryItems,
   fetchOwnSoldInventoryItems,
 } from './inventoryActions';
+
 
 import { currencies, isItemPublicSelections } from 'Util.js';
 
@@ -119,17 +122,16 @@ const Inventory = () => {
     setShowEditSneakerModal(true);
   };
 
-  const renderItemList = (itemArray) => {
-    if (itemArray === undefined) return <div>Spinner</div>;
-
-    if (!itemArray) return null;
-
-    itemArray.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-    return itemArray.map((item, index) => (
-      <Sneaker key={item.id} item={item} onEditClick={onEditClick} onSellClick={onSellClick}/>
-    ));
-  };
+  const onDeleteSneaker = React.useCallback((item) => {
+    setTimeout(async () => {
+      const response = await Api.deleteItem(item.id);
+      if (!response.error) {
+        dispatch(fetchOwnInventoryItems());
+        dispatch(fetchOwnSoldInventoryItems());
+      }
+      dispatch(showSnackbar('Предмет удален'));
+    }, 600);
+  }, [])
 
   return (
     <MainWrapper>
@@ -173,7 +175,7 @@ const Inventory = () => {
       </TopBarWrapper>
 
       <ListWithShadows>
-        {renderItemList(pageState === 0 ? items : soldItems)}
+        <SneakersList itemArray={pageState === 0 ? items : soldItems} onEditClick={onEditClick} onSellClick={onSellClick} onDelete={onDeleteSneaker}/>
       </ListWithShadows>
     </MainWrapper>
   );

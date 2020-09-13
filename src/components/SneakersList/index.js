@@ -1,0 +1,1 @@
+export { SneakersList } from './SneakersList'
