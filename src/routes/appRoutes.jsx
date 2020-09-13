@@ -6,6 +6,7 @@ import AttachMoneyOutlinedIcon from '@material-ui/icons/AttachMoneyOutlined';
 import RoomOutlinedIcon from '@material-ui/icons/RoomOutlined';
 import GroupIcon from '@material-ui/icons/Group';
 
+import Account from 'scenes/Account';
 import Inventory from 'scenes/Inventory';
 import Dealers from 'scenes/Dealers'
 import Stats from 'scenes/Stats';
@@ -16,7 +17,7 @@ const appRoutes = [
     isselected: true,
     icon: PersonOutlineOutlinedIcon,
     path: '/app/account',
-    component: () => <div>Kek1</div>,
+    component: Account,
   },
   {
     name: 'Статистика',

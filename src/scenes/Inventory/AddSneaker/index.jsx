@@ -401,6 +401,16 @@ const AddPhotoWrapper = styled.div`
   margin: 0px 20px;
   display: flex;
   flex-direction: column;
+  position: relative;
+`;
+
+const DeleteCustomImage = styled.div`
+  cursor: pointer;
+  position: absolute;
+  height: 25px;
+  width: 25px;
+  top: 0;
+  right: 0;
 `;
 
 const CustomImageWrapper = styled.div`
@@ -538,6 +548,12 @@ const TitleText = styled.span`
 const CloseIcon = styled(CloseIconInit)`
   && {
     color: ${({ theme }) => theme.colors.nonFocusedTextColor};
+  }
+`;
+
+const RemoveImageIcon = styled(CloseIconInit)`
+  && {
+    color: ${({ theme }) => theme.colors.textColor};
   }
 `;
 

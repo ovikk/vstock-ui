@@ -12,7 +12,8 @@ export default {
     secondaryColor: '#394974',
     approveColor: '#6FCF97',
     errorColor: 'red',
-    modalBackground: '#151D31'
+    modalBackground: '#151D31',
+    lightBlue: '#56CCF2'
   },
   font: 'Ubuntu',
   fontBold: 'Ubuntu-Bold',
