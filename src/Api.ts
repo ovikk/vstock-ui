@@ -9,6 +9,10 @@ const userDataUrl = `${env.server}/api/v1/user`;
 const outOfStockLoginUrl = `${env.server}/api/v1/markets/oos/login`;
 const outOfStockLogoutUrl = `${env.server}/api/v1/markets/oos/logout`;
 
+const theMarketGetCodeUrl = `${env.server}/api/v1/markets/tm/login/send`;
+const theMarketLoginUrl = `${env.server}/api/v1/markets/tm/login`;
+const theMarketLogoutUrl = `${env.server}/api/v1/markets/tm/logout`;
+
 const getInventoryByIdUrl = `${env.server}/api/v1/inventory`;
 const getSoldInventoryUrl = `${env.server}/api/v1/inventory/sold/`;
 const getOwnInventoryUrl = `${env.server}/api/v1/inventory`;
@@ -102,6 +106,18 @@ const authOutOfStock = (email: string, password: string) => {
 
 const logoutOutOfStock = () => {
   return post(outOfStockLogoutUrl, {});
+};
+
+const getTheMarketPasscode = (email: string) => {
+  return post(theMarketGetCodeUrl, { email });
+};
+
+const sendTheMarketPasscode = (email: string, code: string) => {
+  return post(theMarketLoginUrl, { email, code });
+};
+
+const logoutTheMarket = () => {
+  return post(theMarketLogoutUrl, {});
 };
 
 const getInventoryById = (id: string | number) => {
@@ -207,8 +223,13 @@ const api = {
   getStatsWeek,
   uploadImages,
   getUserData,
+
   authOutOfStock,
-  logoutOutOfStock
+  logoutOutOfStock,
+
+  getTheMarketPasscode,
+  sendTheMarketPasscode,
+  logoutTheMarket
 };
 
 export default api;

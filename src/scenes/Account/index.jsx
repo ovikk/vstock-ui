@@ -5,11 +5,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserData } from './accountActions';
 
 import OutOfStockModal from './OutOfStockModal';
+import TheMarketModal from './TheMarketModal';
 
 import styled from 'styled-components';
 import outOfStockIcon from 'assets/outOfStock_logo.svg';
 import theMarketIcon from 'assets/theMarket_logo.svg';
 import DiscordIcon from 'assets/discord_logo.svg';
+import CheckMark from 'assets/check_mark.svg';
 import Button from '@material-ui/core/Button';
 import Input from 'components/InputRounded';
 
@@ -21,6 +23,8 @@ const Account = () => {
   const { userData } = useSelector((state) => state.account);
 
   const [outOfStockOpen, setOutOfStockOpen] = useState(false);
+  const [theMarketOpen, setTheMarketOpen] = useState(false);
+
   const [userCountry, setUserCountry] = useState('');
   const [userCity, setUserCity] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -49,7 +53,7 @@ const Account = () => {
     (m) => m.market_name === 'Out Of Stock'
   );
   const isTheMarketActive = get(userData, 'market_statuses', []).some(
-    (m) => m.market_name === 'The Market'
+    (m) => m.market_name === 'TheMarket'
   );
   const isDiscrodActive = get(userData, 'market_statuses', []).some(
     (m) => m.market_name === 'Discord'
@@ -72,11 +76,31 @@ const Account = () => {
     }
   };
 
+  const onTheMarketClick = async () => {
+    if (isTheMarketActive) {
+      const request = await Api.logoutTheMarket();
+
+      if (!request.error) {
+        dispatch(fetchUserData());
+        dispatch(showSnackbar('Вышли из The Market'));
+      } else {
+        dispatch(showSnackbar(request.error.message));
+      }
+    } else {
+      setTheMarketOpen(true);
+    }
+  };
+
   return (
     <MainWrapper>
       <OutOfStockModal
         open={outOfStockOpen}
         handleClose={() => setOutOfStockOpen(false)}
+      />
+
+      <TheMarketModal
+        open={theMarketOpen}
+        handleClose={() => setTheMarketOpen(false)}
       />
 
       <ContentWrapper>
@@ -113,7 +137,7 @@ const Account = () => {
           <OutOfStockLogo src={outOfStockIcon} active={isOutOfStockActive} />
           <IntegrationCenterWrapper>
             <IntegrationName active={isOutOfStockActive}>
-              OutOfStock
+              OutOfStock {isOutOfStockActive && <img src={CheckMark} />}
             </IntegrationName>
             <IntegrationSubName active={isOutOfStockActive}>
               Lulkek
@@ -130,23 +154,36 @@ const Account = () => {
         <IntegrationWrapper>
           <TheMarketLogo src={theMarketIcon} />
           <IntegrationCenterWrapper>
-            <IntegrationName>TheMarket</IntegrationName>
-            <IntegrationSubName>
-              Для отображения информации подключитесь к сервису.
-            </IntegrationSubName>
+            <IntegrationName active={isTheMarketActive}>
+              TheMarket {isTheMarketActive && <img src={CheckMark} />}
+            </IntegrationName>
+            {!isTheMarketActive && (
+              <IntegrationSubName active={isTheMarketActive}>
+                Для отображения информации подключитесь к сервису.
+              </IntegrationSubName>
+            )}
           </IntegrationCenterWrapper>
-          <IntegrationButton>Подключить</IntegrationButton>
+          <IntegrationButton
+            active={isTheMarketActive}
+            onClick={onTheMarketClick}
+          >
+            {isTheMarketActive ? 'Отключить' : 'Подключить'}
+          </IntegrationButton>
         </IntegrationWrapper>
 
         <IntegrationWrapper>
           <TheMarketLogo src={DiscordIcon} />
           <IntegrationCenterWrapper>
-            <IntegrationName>Discord</IntegrationName>
+            <IntegrationName>
+              Discord {isDiscrodActive && <img src={CheckMark} />}
+            </IntegrationName>
             <IntegrationSubName>
               Для отображения информации подключитесь к сервису.
             </IntegrationSubName>
           </IntegrationCenterWrapper>
-          <IntegrationButton>Подключить</IntegrationButton>
+          <IntegrationButton>
+            {isDiscrodActive ? 'Отключить' : 'Подключить'}
+          </IntegrationButton>
         </IntegrationWrapper>
       </ContentWrapper>
     </MainWrapper>
@@ -204,7 +241,7 @@ const IntegrationWrapper = styled.div`
   border-radius: 25px;
   margin: 10px 0px;
   box-sizing: border-box;
-  padding: 30px;
+  padding: 16px 16px 16px 30px;
   display: flex;
   align-items: center;
 `;
@@ -252,9 +289,10 @@ const IntegrationButton = styled(Button)`
 
     border: ${({ active }) => (!active ? 'none' : '2px solid #394974')};
     background: ${({ active }) =>
-      !active
-        ? 'linear-gradient(70.86deg, #56CCF2 -3.71%, #2D9CDB 98.31%);'
-        : 'inherit'};
+    !active
+      ? 'linear-gradient(70.86deg, #56CCF2 -3.71%, #2D9CDB 98.31%);'
+      : 'inherit'};
     border-radius: 25px;
+    text-transform: capitalize;
   }
 `;
