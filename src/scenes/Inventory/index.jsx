@@ -57,15 +57,17 @@ const Inventory = () => {
   const dispatch = useDispatch();
 
   const { items, soldItems } = useSelector((state) => state.inventory);
+  // console.log(items)
 
   const onSellClick = (item) => {
-    const { name, size_title, sell_price, sell_source, currency, product, id } = item;
+    const { name, size_title, price, sell_source, currency, product, id } = item;
 
     setSellSneakerData({
       id,
       name,
       size_title,
-      sell_price,
+      price,
+      sell_price: 0,
       sell_source,
       currency,
       product

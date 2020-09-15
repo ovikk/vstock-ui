@@ -58,7 +58,7 @@ const PublishSneakerModal = ({ onClose, data }) => {
         </MarketPlacesList>
 
         {isLoading && <p>Загрузка</p>}
-        {!isLoading && !!selectedMarket && !!item && <SelectedMarketForm item={item} />}
+        {!isLoading && !!selectedMarket && !!item && <SelectedMarketForm item={item} onClose={onClose}/>}
 
       </MainWrapper>
     </Dialog>

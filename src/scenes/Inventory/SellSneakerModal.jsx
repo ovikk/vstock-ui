@@ -21,6 +21,7 @@ import { DatePicker } from '@material-ui/pickers';
 import { currencies, isItemPublicSelections, sizes } from 'Util.js';
 
 const SellSneakerModal = ({ onClose, data }) => {
+  console.log('data', data)
   const { ownInventoryId } = useSelector((state) => state.inventory);
   const dispatch = useDispatch();
 
@@ -84,10 +85,14 @@ const SellSneakerModal = ({ onClose, data }) => {
   };
 
   const onAddItemClick = async () => {
-    const { sell_price, sell_date, sell_source } = sneakerData;
+    const { sell_price, price, sell_date, sell_source } = sneakerData;
+    const priceCopy = { ...price };
+    priceCopy.sell_price = sell_price !== '' ? parseFloat(sneakerData.sell_price) : 0;
+    // priceCopy.status_id = 1;
+
     const data = {
       inventory_id: ownInventoryId,
-      sell_price: sell_price !== '' ? parseFloat(sneakerData.sell_price) : 0,
+      price: priceCopy,
       sell_date: moment(sell_date).toISOString(),
       sell_source: sell_source,
       currency: 'RUB',

@@ -4,25 +4,23 @@ import Button from '@material-ui/core/Button';
 import Input from 'components/Input'
 import Api from 'Api';
 
-export const OutOfStockForm = ({ item }) => {
+export const OutOfStockForm = ({ item, onClose }) => {
   const [price, setPrice] = React.useState(0)
-  console.log(item)
+  
   const onAddItemClick = () => { 
     const body = {
       name: item.name,
       size: item.size,
       price: price * 1
     }
-    Api.publishItem('oos', item.item_id, body)
-    console.log(body)
+    Api.publishItem('oos', item.item_id, body).then(() => onClose())
   }
 
   return (
     <div>
-      <p>{item.name}</p>
-      <p>{item.size}</p>
+      <P>{item.name} <Size>{item.size}</Size></P>
 
-      <Input value={price} setInputValue={setPrice}/>
+      <Input value={price} title='Цена продажи' setInputValue={setPrice}/>
 
       <SubmitButton disabled={price <= 0} onClick={onAddItemClick}>
         Разместить
@@ -50,4 +48,13 @@ const SubmitButton = styled(Button)`
       color: white;
     }
   }
+`;
+
+const P = styled.p`
+  margin-top: 30px;
+  font-size: 1.5rem;
+`;
+
+const Size = styled.span`
+  color: gray;
 `;
