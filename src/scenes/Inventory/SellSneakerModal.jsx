@@ -267,6 +267,11 @@ const AddButton = styled(Button)`
     :hover {
       background-color: pink;
     }
+
+    :disabled {
+      background-color: #A3A3A3;
+      color: white;
+    }
   }
 `;
 

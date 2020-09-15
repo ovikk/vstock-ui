@@ -22,6 +22,7 @@ import {
 
 
 import { currencies, isItemPublicSelections } from 'Util.js';
+import PublishSneakerModal from './PublishSneakerModal/PublishSneakerModal';
 
 const pageStates = { own: 0, sold: 1 };
 
@@ -46,10 +47,12 @@ const Inventory = () => {
   const [showAddSneakerModal, setShowAddSneakerModal] = useState(false);
 
   const [showEditSneakerModal, setShowEditSneakerModal] = useState(false);
+  const [showPublishSneakerModal, setShowPublishSneakerModal] = useState(false);
   const [editSneakerData, setEditSneakerData] = useState({});
 
   const [showSellSneakerModal, setShowSellSneakerModal] = useState(false);
   const [sellSneakerData, setSellSneakerData] = useState({});
+  const [publishSneakerData, setPublishSneakerData] = useState({});
 
   const dispatch = useDispatch();
 
@@ -133,6 +136,11 @@ const Inventory = () => {
     }, 600);
   }, [])
 
+  const onPublishStart = (item) => {
+    setPublishSneakerData(item)
+    setShowPublishSneakerModal(true)
+  }
+
   return (
     <MainWrapper>
       {(showAddSneakerModal || showEditSneakerModal) && (
@@ -154,6 +162,12 @@ const Inventory = () => {
         />
       )}
 
+      {showPublishSneakerModal && (
+        <PublishSneakerModal 
+          onClose={() => setShowPublishSneakerModal(false)}
+          data={publishSneakerData}
+        />
+      )}
       <Swither
         currentState={pageState}
         setState={setPageState}
@@ -175,7 +189,13 @@ const Inventory = () => {
       </TopBarWrapper>
 
       <ListWithShadows>
-        <SneakersList itemArray={pageState === 0 ? items : soldItems} onEditClick={onEditClick} onSellClick={onSellClick} onDelete={onDeleteSneaker}/>
+        <SneakersList 
+          itemArray={pageState === 0 ? items : soldItems} 
+          onEditClick={onEditClick} 
+          onSellClick={onSellClick} 
+          onDelete={onDeleteSneaker}
+          onPublish={onPublishStart}
+        />
       </ListWithShadows>
     </MainWrapper>
   );

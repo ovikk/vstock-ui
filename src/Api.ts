@@ -36,6 +36,9 @@ const getStatsYearUrl = `${env.server}/api/v1/stats?period=year`;
 const getStatsMonthUrl = `${env.server}/api/v1/stats?period=month`;
 const getStatsWeekUrl = `${env.server}/api/v1/stats?period=week`;
 
+const getPreviewUrlPrefix = `${env.server}/api/v1/markets`;
+const publishPreviewUrlPrefix = `${env.server}/api/v1/markets`;
+
 const apiFetch = async (url: string, opts: any) => {
   try {
     const response = await fetch(url, opts);
@@ -196,6 +199,15 @@ const uploadImages = (body: FormData) => {
   return upload(uploadImageUrl, body);
 };
 
+const getPreview = (market: string, id: number) => {
+  return post(`${getPreviewUrlPrefix}/${market}/preview/${id}`, {})
+  return post(`${getPreviewUrlPrefix}/${market}/preview/${id}`, {})
+}
+
+const publishItem = (market: string, id: number, body: object) => {
+  return post(`${publishPreviewUrlPrefix}/${market}/publish/${id}`, body)
+}
+
 const api = {
   login,
   registrate,
@@ -229,7 +241,10 @@ const api = {
 
   getTheMarketPasscode,
   sendTheMarketPasscode,
-  logoutTheMarket
+  logoutTheMarket,
+
+  getPreview,
+  publishItem
 };
 
 export default api;

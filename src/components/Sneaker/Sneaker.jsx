@@ -18,16 +18,16 @@ import {
   ItemName,
   ItemTopWrapper,
   ItemWrapper,
-  Divider, 
-  ButtonsList, 
-  ItemButton, 
-  ItemControls, 
-  ItemProfit, 
-  DealerLogin, 
-  ItemMainInfoBottom, 
-  ItemBottomWrapper, 
-  ItemBottomDivider, 
-  ItemControlImageStyle, 
+  Divider,
+  ButtonsList,
+  ItemButton,
+  ItemControls,
+  ItemProfit,
+  DealerLogin,
+  ItemMainInfoBottom,
+  ItemBottomWrapper,
+  ItemBottomDivider,
+  ItemControlImageStyle,
   DividerIconStyle
 } from './styled';
 import { AdditionalInfo } from './AdditionalInfo.jsx';
@@ -38,7 +38,7 @@ const renderCurrency = (currency) => {
   return ' ₽';
 };
 
-export const Sneaker = ({ item, onEditClick, onSellClick, onDelete, readOnly }) => {
+export const Sneaker = ({ item, onEditClick, onSellClick, onPublish, onDelete, readOnly }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [prices, setPrices] = useState(undefined);
 
@@ -63,6 +63,7 @@ export const Sneaker = ({ item, onEditClick, onSellClick, onDelete, readOnly }) 
 
   const onEditClickHandle = React.useCallback(() => onEditClick(item), [onEditClick, item]);
   const onSellClickHandle = React.useCallback(() => onSellClick(item), [onSellClick, item]);
+  const onPublishHandle = React.useCallback(() => onPublish(item), [onPublish, item]);
   const onDeleteHandle = React.useCallback(() => onDelete(item), [onDelete, item]);
 
   return (
@@ -70,10 +71,7 @@ export const Sneaker = ({ item, onEditClick, onSellClick, onDelete, readOnly }) 
       <ItemTopWrapper>
         <ItemImageWrapper>
           <ItemImage
-            src={
-              product.image_url ||
-              'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'
-            }
+            src={product.image_url || 'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'}
           />
         </ItemImageWrapper>
 
@@ -122,7 +120,7 @@ export const Sneaker = ({ item, onEditClick, onSellClick, onDelete, readOnly }) 
         <ButtonsList>
           {(!isSold && !readOnly) && <>
             <ItemButton onClick={onSellClickHandle}>Продано</ItemButton>
-            <ItemButton>Разместить</ItemButton>
+            <ItemButton onClick={onPublishHandle}>Разместить</ItemButton>
           </>}
           {readOnly && <ItemButton>Связаться</ItemButton>}
         </ButtonsList>
