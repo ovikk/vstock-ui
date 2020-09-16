@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useLocation, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { ResponsiveBar } from '@nivo/bar'
 
 import {
   getStatsAll,
@@ -16,6 +17,28 @@ import BarStats from './BarStats';
 import OverallStats from './OverallStats';
 
 const pageStates = { all: 0, year: 1, month: 2, week: 3 };
+
+function byField(field) {
+  return (a, b) => a[field] > b[field] ? 1 : -1;
+}
+
+const theme = {
+  axis: {
+    fontSize: "14px",
+    tickColor: "#fff",
+    ticks: {
+      text: {
+        fill: "#ffffff"
+      }
+    },
+  },
+  grid: {
+    line: {
+      stroke: "#fff",
+      fill: "#fff",
+    }
+  }
+};
 
 const Stats = () => {
   const history = useHistory();
@@ -75,50 +98,119 @@ const Stats = () => {
         width="150px"
       />
 
-      <StatsWrapper>
-        <PartialStatsWrapper style={{ marginRight: '20px' }}>
-          <Card style={{ height: 200 }}>
-            <CardTitle>Аналитика Прибыли</CardTitle>
-          </Card>
-          {stats.best_deals && (
-            <Card>
-              <CardTitle>
-                Лучшие продажи
-                <BestDeals bestDeals={stats.best_deals} />
-              </CardTitle>
-            </Card>
+      <Row style={{ marginRight: '20px' }}>
+        <Card style={{ height: 540, marginRight: '20px', width: '80%' }}>
+          <CardTitle>Аналитика Прибыли</CardTitle>
+          <ChartWrapper>
+            <ResponsiveBar
+              data={(stats.sales.sales || []).map(x => {
+                const date = new Date(x.sell_date);
+                const displayDate = `${date.getDate()}/${date.getMonth() + 1}`
+                return { ...x, profitColor: 'hsl(202, 71%, 52%)', displayDate }
+              }).sort(byField('sell_date'))}
+              keys={['profit']}
+              indexBy="displayDate"
+              enableLabel={false}
+              gridXValues={sales.map((x, index) => index)}
+              margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+              colors={{ scheme: 'category10' }}
+              theme={theme}
+              label={d => `${d.profitColor}: ${d.value}`}
+
+              axisBottom={{
+                tickSize: 12,
+                tickPadding: 12,
+                tickRotation: 45,
+                legendOffset: 35
+              }}
+            />
+          </ChartWrapper>
+          <Row>
+            <span style={{ marginRight: '20px' }}>
+              <div>
+                <Label style={{ width: 'unset' }}>Сумма продаж</Label>
+              </div>
+              <div>
+                <Value style={{ width: 'unset' }}>{stats.analytics.total_sold}</Value>
+              </div>
+            </span>
+            <span style={{ marginRight: '20px' }}>
+              <div>
+                <Label style={{ width: 'unset' }}>Общая прибыль</Label>
+              </div>
+              <div>
+                <Value style={{ width: 'unset' }}>{stats.analytics.profit}</Value>
+              </div>
+            </span>
+            <span style={{ marginRight: '20px' }}>
+              <div>
+                <Label style={{ width: 'unset' }}>Количество продаж</Label>
+              </div>
+              <div>
+                <Value style={{ width: 'unset' }}>{stats.analytics.sold_items}</Value>
+              </div>
+            </span>
+          </Row>
+        </Card>
+
+        <Card style={{ height: 540, width: '20%' }}>
+          <ColFlex>
+            <span>
+              <Label>Цена инвентаря</Label>
+              <Value>{stats.analytics.total_active}</Value>
+            </span>
+            <span>
+              <Label>Цена подписок</Label>
+              <Value>0</Value>
+            </span>
+            <span>
+              <Label>Рыночная цена</Label>
+              <Value>0</Value>
+            </span>
+            <span>
+              <Label>Кол-во подписок</Label>
+              <Value>0</Value>
+            </span>
+            <span>
+              <Label>Товары в инвентаре</Label>
+              <Value>{stats.analytics.active_items}</Value>
+            </span>
+            {/* Лучшие продажи */}
+            {/* <BestDeals bestDeals={stats.best_deals} /> */}
+          </ColFlex>
+        </Card>
+
+      </Row>
+      <PartialStatsWrapper>
+        <Card>
+          <CardTitle>Анализ размеров по инвентарю</CardTitle>
+          {stats.size_count && (
+            <BarStats
+              items={stats.size_count.map((o) => {
+                return { name: o.size, amount: o.amount };
+              })}
+            />
           )}
-        </PartialStatsWrapper>
-        <PartialStatsWrapper>
-          <Card>
-            <CardTitle>Анализ размеров по инвентарю</CardTitle>
-            {stats.size_count && (
-              <BarStats
-                items={stats.size_count.map((o) => {
-                  return { name: o.size, amount: o.amount };
-                })}
-              />
-            )}
 
-            <Divider />
+          <Divider />
 
-            <CardTitle>Анализ по брендам</CardTitle>
-            {stats.brand_count && (
-              <BarStats
-                items={stats.brand_count.map((o) => {
-                  return { name: o.brand, amount: o.amount };
-                })}
-              />
-            )}
-          </Card>
-          <Card>
-            <OverallStats
+          <CardTitle>Анализ по брендам</CardTitle>
+          {stats.brand_count && (
+            <BarStats
+              items={stats.brand_count.map((o) => {
+                return { name: o.brand, amount: o.amount };
+              })}
+            />
+          )}
+        </Card>
+        <Card>
+          {/* <OverallStats
               turnover={stats.turnover}
               item_count={stats.item_count}
-            />
-          </Card>
-        </PartialStatsWrapper>
-      </StatsWrapper>
+            /> */}
+        </Card>
+      </PartialStatsWrapper>
+      {/* </StatsWrapper> */}
     </MainWrapper>
   );
 };
@@ -175,4 +267,38 @@ const Divider = styled.div`
 const CardTitle = styled.span`
   color: ${({ theme }) => theme.colors.textColor};
   font-size: 24px;
+`;
+
+const Row = styled.div`
+  display: flex;
+`;
+
+const Label = styled.label`
+  font-size: 18px;
+  line-height: 21px;
+
+  color: #6578A9;
+  display: inline-block;
+  width: 100%;
+`;
+
+const Value = styled.label`
+  font-size: 36px;
+  line-height: 41px;
+  /* identical to box height */
+
+  color: #FFFFFF;
+  display: inline-block;
+  width: 100%;
+`;
+
+const ColFlex = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+`;
+
+const ChartWrapper = styled.div`
+  height: 400px;
 `;

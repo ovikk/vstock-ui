@@ -30,6 +30,7 @@ export default Switcher;
 const StockSwithcerWrapper = styled.div`
   height: 50px;
   display: flex;
+  margin-bottom: 40px;
 `;
 
 const StockSwitcherTab = styled.div`
